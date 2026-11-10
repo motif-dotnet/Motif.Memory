@@ -12,6 +12,7 @@ Motif Memory sets up a git repo of Markdown files as an agent's external memory.
 | 6 | Design guidelines | Called design guidelines, not coding standards. Pure style lives in `.editorconfig` and analysers. The memory holds only what needs judgement. |
 | 7 | Growth | A Memory Auditor role is how the memory grows. Who commits memory changes, and when, could be a setup choice, or left open to develop over time. |
 | 8 | Place in the suite | One more tool alongside the others, not the front door to the suite. The tools are pick and mix, so someone may skip ports and adapters, or another Motif tool, and keep those guidelines in their memory instead. |
+| 9 | Starting point | It starts from an earlier version of the memory, and perhaps a desktop tool that configures it. Those will be reviewed and sanity-checked, then the tool turned into a web app in the Motif style. |
 
 ## Still open
 

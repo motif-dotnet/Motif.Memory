@@ -19,7 +19,7 @@ An idea for a tool in the **[Motif.NET](https://github.com/motif-dotnet)** suite
 
 ## Status
 
-**Idea.** Nothing is built yet. It's planned as a web app in the Motif style. The decisions and open questions so far are in [decisions.md](decisions.md).
+**Idea.** Nothing is built here yet. There's an earlier version of the memory, and perhaps a desktop tool that configures it. The plan is to review and sanity-check those, then turn the tool into a web app in the Motif style. The decisions and open questions so far are in [decisions.md](decisions.md).
 
 ## License
 
