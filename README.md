@@ -17,9 +17,31 @@ The next tool in the **[Motif.NET](https://github.com/motif-dotnet)** suite. It 
 - **Design guidelines**, to pick and mix. They're called guidelines rather than coding standards because anything a formatter or analyser can enforce belongs in `.editorconfig`, not in memory.
 - **How the memory changes**: who commits a change and when. You could also leave this open and let the flow develop over time.
 
+## Design
+
+A first draft, from the discussion so far.
+
+### Context diagram
+
+![Motif Memory context diagram](motif/diagrams/context-diagram.svg)
+
+### Ports and adapters
+
+![Motif Memory ports-and-adapters sketch](motif/diagrams/ports-and-adapters.svg)
+
+These pictures are exported by [Motif Sketch](https://motif-dotnet.github.io/Motif.Sketch/) from [motif/sketch.motifsketch.json](motif/sketch.motifsketch.json). The [motif/](motif/) folder holds the design, the [solution plan](motif/plan.md) and the [glossary](motif/glossary.md), which is mostly *proposed* for now.
+
 ## Status
 
 **Next up.** Being designed, nothing built here yet. There's an earlier version of the memory, and perhaps a desktop tool that configures it. The plan is to review and sanity-check those, then turn the tool into a web app in the Motif style. The decisions and open questions so far are in [decisions.md](decisions.md).
+
+## Files
+
+| File | What it is |
+|---|---|
+| [decisions.md](decisions.md) | The decisions so far and why, and what's still open |
+| [motif/](motif/README.md) | Motif Memory's own design, solution plan, diagrams and glossary |
+| [AGENTS.md](AGENTS.md) | Where coding agents start |
 
 ## License
 

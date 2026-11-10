@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "title": "Motif Memory",
+  "contextDiagram": {
+    "elements": [
+      {
+        "id": "4d3e0a01",
+        "type": "system",
+        "name": "Motif Memory",
+        "description": "Sets up an agent's external memory, with the roles, workflow and design guidelines you choose",
+        "technology": "Blazor WebAssembly (GitHub Pages)",
+        "codeRoot": "Motif.Memory",
+        "x": 0,
+        "y": 0,
+        "pinned": false
+      },
+      {
+        "id": "4d3e0a02",
+        "type": "primaryActor",
+        "name": "Developer",
+        "description": "Chooses the roles, workflow and design guidelines that suit their way of working, and sets up their agent's memory",
+        "technology": "Web browser",
+        "x": -345,
+        "y": 0,
+        "pinned": false
+      },
+      {
+        "id": "4d3e0a03",
+        "type": "storage",
+        "name": "Memory Repo",
+        "description": "The starter memory, on the Developer's computer: Markdown files to make into a git repo, and the pointer for the agent's instructions file",
+        "technology": "Local files (folder or zip)",
+        "x": 345,
+        "y": 0,
+        "pinned": false
+      }
+    ],
+    "relationships": [
+      {
+        "id": "4d3e0b01",
+        "from": "4d3e0a02",
+        "to": "4d3e0a01",
+        "label": "Chooses roles, workflow and guidelines",
+        "direction": "oneWay"
+      },
+      {
+        "id": "4d3e0b02",
+        "from": "4d3e0a01",
+        "to": "4d3e0a03",
+        "label": "Writes the starter memory",
+        "direction": "oneWay"
+      }
+    ]
+  },
+  "sketch": {
+    "ports": [
+      {
+        "id": "4d3e0c01",
+        "name": "User",
+        "side": "driving",
+        "isUser": true,
+        "adapters": [
+          {
+            "id": "4d3e0d01",
+            "name": "Web App",
+            "technology": "Blazor WebAssembly UI",
+            "description": "The setup page: pick roles, shape the workflow, pick and mix design guidelines, then write the memory out",
+            "kind": "real",
+            "sources": [
+              "4d3e0a02"
+            ]
+          },
+          {
+            "id": "4d3e0d02",
+            "name": "Specs",
+            "technology": "xUnit",
+            "description": "Checks that drive the application through the User port, using the fake driven adapters",
+            "kind": "checks",
+            "sources": []
+          }
+        ]
+      },
+      {
+        "id": "4d3e0c02",
+        "name": "Memory Files",
+        "description": "Writes the starter memory out: its Markdown files, and the pointer for the agent's instructions file",
+        "side": "driven",
+        "isUser": false,
+        "adapters": [
+          {
+            "id": "4d3e0d03",
+            "name": "Browser Files",
+            "technology": "Folder picker or zip download (JS interop)",
+            "description": "Writes the files into a folder the Developer picks, or downloads them as a zip where the browser can't",
+            "kind": "real",
+            "sources": [
+              "4d3e0a03"
+            ]
+          },
+          {
+            "id": "4d3e0d04",
+            "name": "Fake Memory Files",
+            "kind": "fake",
+            "sources": []
+          }
+        ]
+      }
+    ]
+  }
+}

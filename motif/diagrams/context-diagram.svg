@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="940" height="210" viewBox="-470 -105 940 210" font-family="'IBM Plex Sans', 'Segoe UI', Arial, sans-serif" xmlns="http://www.w3.org/2000/svg">
+  <title>Motif Memory</title>
+  <defs>
+    <marker id="arrow" viewBox="0 0 12 10" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L12,5 L0,10 Z" fill="#52606D" />
+    </marker>
+  </defs>
+  <rect x="-470" y="-105" width="940" height="210" fill="#FFFFFF" />
+  <g class="relationship" data-id="4d3e0b01">
+    <line x1="-260" y1="0" x2="-120" y2="0" stroke="#52606D" stroke-width="1.5" stroke-linecap="round" class="outline" marker-end="url(#arrow)" />
+    <rect x="-233.45" y="-22.5" width="86.9" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="-190" y="-15" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">Chooses roles,</text>
+    <rect x="-230.38" y="-7.5" width="80.77" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="-190" y="0" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">workflow and</text>
+    <rect x="-221.61" y="7.5" width="63.21" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="-190" y="15" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">guidelines</text>
+  </g>
+  <g class="relationship" data-id="4d3e0b02">
+    <line x1="120" y1="0" x2="260" y2="0" stroke="#52606D" stroke-width="1.5" stroke-linecap="round" class="outline" marker-end="url(#arrow)" />
+    <rect x="158.41" y="-22.5" width="63.19" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="190" y="-15" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">Writes the</text>
+    <rect x="167.96" y="-7.5" width="44.07" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="190" y="0" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">starter</text>
+    <rect x="163.67" y="7.5" width="52.65" height="15" fill="#FFFFFF" stroke="none" stroke-width="0" />
+    <text x="190" y="15" font-size="12" fill="#0F172A" text-anchor="middle" dominant-baseline="central">memory</text>
+  </g>
+  <g class="element" data-id="4d3e0a01" data-type="system">
+    <rect x="-120" y="-65" width="240" height="130" rx="6" ry="6" fill="#FFFFFF" stroke="#0F172A" stroke-width="3" class="outline" />
+    <text x="0" y="-22.62" font-size="16" fill="#0F172A" text-anchor="middle" dominant-baseline="central" font-weight="600">Motif Memory</text>
+    <text x="0" y="-1.75" font-size="11" fill="#0F172A" text-anchor="middle" dominant-baseline="central">Sets up an agent's external memory, with</text>
+    <text x="0" y="12" font-size="11" fill="#0F172A" text-anchor="middle" dominant-baseline="central">the roles, workflow and design guidelines</text>
+    <text x="0" y="25.75" font-size="11" fill="#0F172A" text-anchor="middle" dominant-baseline="central">you choose</text>
+  </g>
+  <g class="element" data-id="4d3e0a02" data-type="primaryActor">
+    <rect x="-430" y="-45" width="170" height="90" rx="10" ry="10" fill="#64748B" stroke="#475569" stroke-width="2" class="outline" />
+    <circle cx="-345" cy="-23.12" r="5.5" fill="#FFFFFF" />
+    <path d="M-358,-2.62 A13,13 0 0 1 -332,-2.62 Z" fill="#FFFFFF" />
+    <text x="-345" y="6.12" font-size="14" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" font-weight="600">Developer</text>
+    <text x="-345" y="21.75" font-size="11" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" fill-opacity="0.8">Web browser</text>
+  </g>
+  <g class="element" data-id="4d3e0a03" data-type="storage">
+    <g>
+      <path d="M260,-33 A85,12 0 0 1 430,-33 L430,33 A85,12 0 0 1 260,33 Z" fill="#CBD5E1" stroke="#475569" stroke-width="2" class="outline" />
+      <path d="M260,-33 A85,12 0 0 0 430,-33" fill="none" stroke="#475569" stroke-width="2" />
+    </g>
+    <text x="345" y="-0.88" font-size="14" fill="#1E293B" text-anchor="middle" dominant-baseline="central" font-weight="600">Memory Repo</text>
+    <text x="345" y="14.75" font-size="11" fill="#1E293B" text-anchor="middle" dominant-baseline="central" fill-opacity="0.8">Local files (folder or zip)</text>
+  </g>
+</svg>
