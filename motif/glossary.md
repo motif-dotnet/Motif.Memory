@@ -4,6 +4,8 @@ The words this project uses, and what they mean. People and agents use these ter
 
 The format is described in the [Motif Glossary design note](https://github.com/motif-dotnet/.github/blob/main/design/glossary.md). **Sketch** gives the id of the element or port in Motif Memory's own design ([sketch.motifsketch.json](sketch.motifsketch.json)) that the term comes from.
 
+In prose, the names of specific things (roles, ports, actors, storage) take Title Case: the Memory Auditor, the Developer. Other terms stay lower case: lesson, temporary doc. Use italics only when writing about the word itself. A doc for people may link a term to its entry the first time it appears.
+
 Nothing is built yet, so most terms are proposed, and none has an **In code** field.
 
 ## Catalogue
@@ -51,6 +53,15 @@ The file an agent reads at the start of every session, such as `CLAUDE.md` or `A
 - **Avoid:** config, prompt
 - **Status:** proposed
 - **See also:** [Pointer](#pointer)
+
+## Lesson
+
+Something learned while working that's worth keeping, such as a correction, a preference, or why a bug was left alone. The Memory Auditor and Review Responder turn lessons into proposed rules. A lesson isn't in the memory until the user agrees a rule for it.
+
+- **Kind:** domain concept
+- **Avoid:** learning, insight, finding (that's a code review's), memory (that's the whole thing)
+- **Status:** proposed
+- **See also:** [Memory Auditor](#memory-auditor), [Rule](#rule)
 
 ## Memory
 
@@ -160,6 +171,15 @@ A part the agent plays, such as the Bug Fixer or the Memory Auditor. The Develop
 - **Avoid:** persona, agent (the agent is what plays a role)
 - **Status:** proposed
 - **See also:** [Core](#core), [Stage](#stage), [Workflow](#workflow)
+
+## Rule
+
+One agreed line in a memory note, such as one of a role's Rules or a design guideline. The Memory Editor writes it, and only with the user's OK.
+
+- **Kind:** domain concept
+- **Avoid:** instruction (that's the instructions file), policy
+- **Status:** proposed
+- **See also:** [Design guideline](#design-guideline) (a kind of rule), [Lesson](#lesson)
 
 ## Setup
 
