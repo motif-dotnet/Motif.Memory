@@ -19,4 +19,4 @@ This repo is designed with the [Motif.NET](https://github.com/motif-dotnet) tool
 
 ## In this repo
 
-Nothing is built yet, so the plan hasn't been stubbed out, and most of the glossary is *proposed*. The sketch is a first draft from the discussion in [decisions.md](../decisions.md), and will change once the earlier version has been reviewed.
+Nothing is built yet, so the plan hasn't been stubbed out, and most of the glossary is *proposed*. The sketch follows the decisions in [decisions.md](../decisions.md), made after reviewing an example memory. The plan and diagrams were updated by hand to match it; re-export them from Motif Sketch next time it's opened.

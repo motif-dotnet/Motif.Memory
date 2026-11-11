@@ -5,17 +5,23 @@ The next tool in the **[Motif.NET](https://github.com/motif-dotnet)** suite. It 
 ## The idea
 
 - **The memory lives in a repo of its own.** Your `CLAUDE.md` (or another agent's instructions file) holds only a pointer to the memory's starting point. Everything else lives in the memory repo.
-- **Progressively discoverable.** The starting point is short and points onwards, so an agent reads only what the task in hand needs.
+- **Progressively discoverable.** The starting point only routes, and every link says when to follow it, so an agent reads only what the task in hand needs, never the whole memory.
+- **Three layers.** Your memory holds the roles, workflow and guidelines, plus a private note per repo for your own setup there. Each repo can also have a shared memory file in its `motif/` folder, for what anyone working on it needs.
 - **Why not the agent's built-in memory?** A structure of your own choosing. It's portable across machines, readable by any agent rather than one, and in git, so you can review each change as a diff and see its history.
-- **It grows as it's used.** A **Memory Auditor** role looks after it, and that's how lessons find their way in.
-- **The tool is mainly for setup.** It configures and writes out the first version of the memory, and is probably quite a simple app.
+- **It grows as it's used.** A **Memory Auditor** role looks after it, and that's how lessons find their way in. Nothing changes without your OK.
+- **The tool is mainly for setup.** It writes out the first version of the memory, and doubles as a catalogue for adding a role or pack later.
 
-## What setup would let you choose
+## What setup lets you choose
 
-- **Roles** the agent can play, such as Memory Auditor.
-- **A workflow** that each change goes through, with temporary docs that carry information from one stage to the next.
-- **Design guidelines**, to pick and mix. They're called guidelines rather than coding standards because anything a formatter or analyser can enforce belongs in `.editorconfig`, not in memory.
-- **How the memory changes**: who commits a change and when. You could also leave this open and let the flow develop over time.
+Every memory has a core: the starting point, a Memory Editor and a Memory Auditor. On top of that:
+
+- **Roles** the agent can play, such as Feature Implementor, Code Reviewer or Bug Fixer. All are on by default. Each brings its stage in the workflow and the temporary docs it writes.
+- **The workflow's order.** The stages come in a default order you can change, with a gentle warning if a stage would need a doc nothing earlier writes.
+- **Design guidelines**, in packs such as General and C#, with single guidelines you can untick. Only what needs judgement: anything a formatter or analyser can enforce belongs in `.editorconfig`, which Motif Sketch's solution plan sets up.
+- **When memory changes are committed**: once you've agreed them (the default), only when you ask, or by you.
+- **Obsidian**, if you'd like to read the memory there.
+
+At the end, the app shows the pointer to paste into each agent's instructions file. It writes nothing outside the memory folder.
 
 ## Design
 
@@ -33,7 +39,7 @@ These pictures are exported by [Motif Sketch](https://motif-dotnet.github.io/Mot
 
 ## Status
 
-**Next up.** Being designed, nothing built here yet. There's an earlier version of the memory, and perhaps a desktop tool that configures it. The plan is to review and sanity-check those, then turn the tool into a web app in the Motif style. The decisions and open questions so far are in [decisions.md](decisions.md).
+**Next up.** Designed, nothing built yet. The design comes from reviewing an example memory that grew through real use. Next comes the content: the generic roles and guidelines, as Markdown in `Content/`, used as a real memory on the Motif repos. The app gets built after that, around content that's been tried. The decisions and open questions are in [decisions.md](decisions.md).
 
 ## Files
 

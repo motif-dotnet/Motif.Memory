@@ -8,7 +8,7 @@
 - **Purpose**: Sets up an agent's external memory, with the roles, workflow and design guidelines you choose
 - **Solution**: `Motif.Memory.sln`, targeting `net10.0`
 - **Architecture**: ports and adapters. The application core (Domain and UseCases) knows nothing about the outside world; every external concern sits behind a port and is reached through an adapter.
-- **Ports**: 1 driving, 1 driven
+- **Ports**: 1 driving, 2 driven
 
 ## 2. Solution and project layout
 
@@ -21,6 +21,7 @@ Motif.Memory.sln
     Motif.Memory.Domain/
     Motif.Memory.UseCases/
   Adapters/
+    Motif.Memory.MemoryContent/
     Motif.Memory.MemoryFiles/
   Checks/
     Motif.Memory.Fakes/
@@ -32,6 +33,7 @@ Motif.Memory.sln
 | `Motif.Memory.App` | `Motif.Memory.App/` | `blazorwasm` | `Motif.Memory.App` | The app: runnable adapter on the User port |
 | `Motif.Memory.Domain` | `Motif.Memory/Motif.Memory.Domain/` | `classlib` | `Motif.Memory` | Domain-specific business rules |
 | `Motif.Memory.UseCases` | `Motif.Memory/Motif.Memory.UseCases/` | `classlib` | `Motif.Memory` | Application rules (use cases) and all port interfaces |
+| `Motif.Memory.MemoryContent` | `Adapters/Motif.Memory.MemoryContent/` | `classlib` | `Motif.Memory.Adapters` | Adapters on the Memory Content port |
 | `Motif.Memory.MemoryFiles` | `Adapters/Motif.Memory.MemoryFiles/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the Memory Files port |
 | `Motif.Memory.Fakes` | `Checks/Motif.Memory.Fakes/` | `classlib` | `Motif.Memory.Fakes` | Fake driven adapters, for specs |
 | `Motif.Memory.Specs` | `Checks/Motif.Memory.Specs/` | `xunit` | `Motif.Memory.Specs` | Specs: the checks on every driving port |
@@ -43,6 +45,7 @@ Motif.Memory.sln
 | `Motif.Memory.App` | `Motif.Memory.UseCases` |
 | `Motif.Memory.Domain` | nothing |
 | `Motif.Memory.UseCases` | `Motif.Memory.Domain` |
+| `Motif.Memory.MemoryContent` | `Motif.Memory.UseCases` |
 | `Motif.Memory.MemoryFiles` | `Motif.Memory.UseCases` |
 | `Motif.Memory.Fakes` | `Motif.Memory.UseCases` |
 | `Motif.Memory.Specs` | `Motif.Memory.UseCases`, `Motif.Memory.Fakes` |
@@ -73,6 +76,7 @@ Motif.Memory.UseCases/
   UserQueries.cs
   MotifMemoryApplication.cs
   Ports/
+    MemoryContent.cs
     MemoryFiles.cs
 ```
 
@@ -102,7 +106,7 @@ public interface UserQueries
 
 ### Memory Files (driven)
 
-Writes the starter memory out: its Markdown files, and the pointer for the agent's instructions file
+Writes the starter memory's Markdown files out
 
 `Ports/MemoryFiles.cs`:
 
@@ -110,6 +114,20 @@ Writes the starter memory out: its Markdown files, and the pointer for the agent
 namespace Motif.Memory;
 
 public interface MemoryFiles
+{
+}
+```
+
+### Memory Content (driven)
+
+Reads the role and pack texts the memory is made from
+
+`Ports/MemoryContent.cs`:
+
+```csharp
+namespace Motif.Memory;
+
+public interface MemoryContent
 {
 }
 ```
@@ -126,6 +144,8 @@ Kinds: **Real** is the production adapter; **Fake** is a simple in-process stand
 | User | Specs | Checks | xUnit | `Motif.Memory.Specs` | - | Added in the sketch |
 | Memory Files | Browser Files | Real | Folder picker or zip download (JS interop) | `Motif.Memory.MemoryFiles` | `BrowserFilesMemoryFiles` | Context diagram: Memory Repo |
 | Memory Files | Fake Memory Files | Fake | - | `Motif.Memory.Fakes` (`MemoryFiles/`) | `FakeMemoryFiles` | Added in the sketch |
+| Memory Content | Bundled Content | Real | Static files over HTTP (HttpClient) | `Motif.Memory.MemoryContent` | `BundledContentMemoryContent` | Added in the sketch |
+| Memory Content | Fake Memory Content | Fake | - | `Motif.Memory.Fakes` (`MemoryContent/`) | `FakeMemoryContent` | Added in the sketch |
 
 For each driven adapter, add the stub class named above implementing its port's interface, in its project's namespace and in the folder shown. For example:
 
@@ -141,13 +161,14 @@ Driving adapters (the app among them) keep their project template's default file
 
 Adapter notes:
 
-- **Web App** (`Motif.Memory.App`): The setup page: pick roles, shape the workflow, pick and mix design guidelines, then write the memory out
+- **Web App** (`Motif.Memory.App`): The setup page and the catalogue: pick roles, order the workflow stages, pick guidelines from packs, and write the memory out; or view and download a single role or pack
 - **Specs** (`Motif.Memory.Specs`): Checks that drive the application through the User port, using the fake driven adapters
 - **Browser Files** (`Motif.Memory.MemoryFiles`): Writes the files into a folder the Developer picks, or downloads them as a zip where the browser can't
+- **Bundled Content** (`Motif.Memory.MemoryContent`): Reads the Markdown in Content/, shipped with the app as static files
 
 ## 7. Fakes and specs
 
-- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake driven adapter, with a folder per port (`MemoryFiles/`). The namespace is flat: `Motif.Memory.Fakes`.
+- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake driven adapter, with a folder per port (`MemoryFiles/`, `MemoryContent/`). The namespace is flat: `Motif.Memory.Fakes`.
 - `Motif.Memory.Specs` (`Checks/Motif.Memory.Specs/`): xUnit. Packages: `Microsoft.NET.Test.Sdk`, `xunit`, `xunit.runner.visualstudio`, `coverlet.collector`, `AwesomeAssertions`. Keep the template's packages and add `AwesomeAssertions`.
   Add one placeholder spec class with a single passing `[Fact]`, so `dotnet test` runs. Specs wire the fake adapters up by hand; there is no composition root yet.
 - The browser adapters (`Motif.Memory.MemoryFiles`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.

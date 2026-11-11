@@ -36,7 +36,7 @@
       <text x="-341.46" y="39" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">Checks · xUnit</text>
     </g>
   </g>
-  <g>
+  <g transform="translate(0,-75)">
     <line x1="240.11" y1="-8.94" x2="282.22" y2="-30" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />
     <line x1="240.11" y1="8.94" x2="282.22" y2="30" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />
     <g class="port" data-id="4d3e0c02">
@@ -53,6 +53,25 @@
       <rect x="282.22" y="5" width="144.76" height="50" rx="4" ry="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" stroke-dasharray="5 3" class="outline" />
       <text x="354.61" y="22" font-size="13" fill="#0F172A" text-anchor="middle" dominant-baseline="central" font-weight="600">Fake Memory Files</text>
       <text x="354.61" y="39" font-size="11" fill="#64748B" text-anchor="middle" dominant-baseline="central">Fake</text>
+    </g>
+  </g>
+  <g transform="translate(0,75)">
+    <line x1="240.11" y1="-8.94" x2="282.22" y2="-30" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />
+    <line x1="240.11" y1="8.94" x2="282.22" y2="30" stroke="#0F172A" stroke-width="1" stroke-linecap="round" />
+    <g class="port" data-id="4d3e0c03">
+      <line x1="147.22" y1="0" x2="202.22" y2="0" stroke="#0F172A" stroke-width="2" stroke-linecap="round" />
+      <circle cx="222.22" cy="0" r="20" fill="#FFFFFF" stroke="#334155" stroke-width="2" class="outline" />
+      <text x="222.22" y="-36" font-size="14" fill="#334155" text-anchor="middle" dominant-baseline="central" font-weight="600">Memory Content</text>
+    </g>
+    <g class="adapter" data-id="4d3e0d05" data-kind="real">
+      <rect x="282.22" y="-55" width="210" height="50" rx="4" ry="4" fill="#64748B" stroke="#475569" stroke-width="1.2" class="outline" />
+      <text x="387.22" y="-38" font-size="13" fill="#FFFFFF" text-anchor="middle" dominant-baseline="central" font-weight="600">Bundled Content</text>
+      <text x="387.22" y="-21" font-size="11" fill="#E2E8F0" text-anchor="middle" dominant-baseline="central">Static files over HTTP (HttpClient)</text>
+    </g>
+    <g class="adapter" data-id="4d3e0d06" data-kind="fake">
+      <rect x="282.22" y="5" width="160" height="50" rx="4" ry="4" fill="#FFFFFF" stroke="#64748B" stroke-width="1.2" stroke-dasharray="5 3" class="outline" />
+      <text x="362.22" y="22" font-size="13" fill="#0F172A" text-anchor="middle" dominant-baseline="central" font-weight="600">Fake Memory Content</text>
+      <text x="362.22" y="39" font-size="11" fill="#64748B" text-anchor="middle" dominant-baseline="central">Fake</text>
     </g>
   </g>
   <text x="-441.11" y="-200" font-size="18" fill="#0F172A" text-anchor="start" dominant-baseline="central" font-weight="600">Motif Memory</text>

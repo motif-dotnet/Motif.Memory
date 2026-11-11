@@ -28,7 +28,7 @@
         "id": "4d3e0a03",
         "type": "storage",
         "name": "Memory Repo",
-        "description": "The starter memory, on the Developer's computer: Markdown files to make into a git repo, and the pointer for the agent's instructions file",
+        "description": "The starter memory, on the Developer's computer: Markdown files the Developer makes into a git repo of its own",
         "technology": "Local files (folder or zip)",
         "x": 345,
         "y": 0,
@@ -64,7 +64,7 @@
             "id": "4d3e0d01",
             "name": "Web App",
             "technology": "Blazor WebAssembly UI",
-            "description": "The setup page: pick roles, shape the workflow, pick and mix design guidelines, then write the memory out",
+            "description": "The setup page and the catalogue: pick roles, order the workflow stages, pick guidelines from packs, and write the memory out; or view and download a single role or pack",
             "kind": "real",
             "sources": [
               "4d3e0a02"
@@ -83,7 +83,7 @@
       {
         "id": "4d3e0c02",
         "name": "Memory Files",
-        "description": "Writes the starter memory out: its Markdown files, and the pointer for the agent's instructions file",
+        "description": "Writes the starter memory's Markdown files out",
         "side": "driven",
         "isUser": false,
         "adapters": [
@@ -100,6 +100,29 @@
           {
             "id": "4d3e0d04",
             "name": "Fake Memory Files",
+            "kind": "fake",
+            "sources": []
+          }
+        ]
+      },
+      {
+        "id": "4d3e0c03",
+        "name": "Memory Content",
+        "description": "Reads the role and pack texts the memory is made from",
+        "side": "driven",
+        "isUser": false,
+        "adapters": [
+          {
+            "id": "4d3e0d05",
+            "name": "Bundled Content",
+            "technology": "Static files over HTTP (HttpClient)",
+            "description": "Reads the Markdown in Content/, shipped with the app as static files",
+            "kind": "real",
+            "sources": []
+          },
+          {
+            "id": "4d3e0d06",
+            "name": "Fake Memory Content",
             "kind": "fake",
             "sources": []
           }
