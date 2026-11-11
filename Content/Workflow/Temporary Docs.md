@@ -8,7 +8,7 @@ Temporary docs are working notes for a piece of work. They all live in one folde
 
   > Temporary notes. **Never commit.** Delete when the work is finished.
 
-If the doc already exists, add to it rather than starting another. In a .NET repo, also list the docs in a `_TEMP_DO_NOT_MERGE` solution folder in the main solution, so the user can see them, and remove the solution folder when deleting the docs.
+If the doc already exists, add to it rather than starting another. In a .NET repo on a branch, also list the docs in a `_TEMP_DO_NOT_MERGE` solution folder in the main solution, so the user can see them, and remove the solution folder when deleting the docs. Not straight on the main branch: the solution file is committed, so the folder would be too.
 
 They're deleted, so anything a future reader of the code needs, such as why a bug was left alone, also goes in a comment by the code.
 
