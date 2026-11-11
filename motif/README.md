@@ -4,6 +4,7 @@ This repo is designed with the [Motif.NET](https://github.com/motif-dotnet) tool
 
 | File | What it is | Who changes it |
 |---|---|---|
+| [memory.md](memory.md) | The repo's memory: rules for anyone working on it, read by agents that use a Motif Memory and by anyone else | People and agents, by hand, with the user's OK |
 | [glossary.md](glossary.md) | The project's terms: what each word means, and which words to avoid | People and agents, by hand. Motif Sketch's Export glossary adds *proposed* terms for the sketch, and changes nothing else |
 | [sketch.motifsketch.json](sketch.motifsketch.json) | The design: the context diagram and the ports-and-adapters sketch | People in [Motif Sketch](https://motif-dotnet.github.io/Motif.Sketch/), or agents when asked |
 | [plan.md](plan.md) | The solution plan exported from the sketch: the projects, ports and adapters to build | Motif Sketch only (Export plan) |
@@ -11,7 +12,7 @@ This repo is designed with the [Motif.NET](https://github.com/motif-dotnet) tool
 
 ## For coding agents
 
-1. **Read [glossary.md](glossary.md) first.** Use its terms in code, comments, docs and messages, and don't use the words it lists under **Avoid**. When you introduce a new concept, add an entry for it marked *proposed* in the same change. When something is renamed, rename its entry and move the old name to **Avoid**.
+1. **Read [memory.md](memory.md) and [glossary.md](glossary.md) first.** Use its terms in code, comments, docs and messages, and don't use the words it lists under **Avoid**. When you introduce a new concept, add an entry for it marked *proposed* in the same change. When something is renamed, rename its entry and move the old name to **Avoid**.
 2. **Read [plan.md](plan.md)** for the shape of the solution. The code follows it.
 3. **Change the sketch only when asked.** Edit the JSON in place and keep it a file Motif Sketch can open: keep every `id`, give new items new unique ids, and give each new element its one relationship with the system. If the design needs a change nobody asked for, say so instead.
 4. **Don't edit the plan or the diagrams by hand.** They're exported from the sketch, so after the sketch changes, re-export them in Motif Sketch, or say they're out of date.
