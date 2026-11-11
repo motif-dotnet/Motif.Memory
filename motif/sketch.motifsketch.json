@@ -115,8 +115,8 @@
           {
             "id": "4d3e0d05",
             "name": "Bundled Content",
-            "technology": "Static files over HTTP (HttpClient)",
-            "description": "Reads the Markdown in Content/, shipped with the app as static files",
+            "technology": "Embedded resources",
+            "description": "Reads the Markdown in Content/, embedded in the adapter as resources",
             "kind": "real",
             "sources": []
           },

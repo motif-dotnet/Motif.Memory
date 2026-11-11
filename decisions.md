@@ -50,11 +50,26 @@ Motif Memory sets up a git repo of Markdown files as an agent's external memory.
 | 27 | Pointer | The app writes only inside the memory folder. At the end it shows the pointer for each agent ticked (Claude Code, Codex via `AGENTS.md`, or just the line), for the Developer to paste. The memory's README repeats the steps, for setting up on another machine. The instructions file holds nothing else, except rules that must apply even when the memory isn't read, such as ones overriding the agent's own defaults. |
 | 28 | Setup plus parts | The app never reads an existing memory. It's also a catalogue: any single role or pack can be viewed or downloaded, with its stage and temporary docs, and the Memory Editor merges it in. The memory's README says where the catalogue is. |
 | 29 | Form | A Blazor WebAssembly app on GitHub Pages. A `dotnet new` template was considered, but ordering stages, unticking single guidelines, the warnings and the catalogue all need a page. It writes to a folder the Developer picks, or a zip. The browser can't run git, so the last screen gives the next steps. |
-| 30 | Content | The role and pack texts are Markdown in `Content/`, shipped with the app and read through the Memory Content port. With everything ticked, `Content/` is itself a complete memory. Improvements found by using it come back as ordinary diffs. |
+| 30 | Content | The role and pack texts are Markdown in `Content/`, embedded in the app and read through the Memory Content port. `Content/` is only the app's input, not a memory: no agent follows it, so it can carry markup for the app (#35, #36) that the app strips out. Agents working on this repo keep their rules in `motif/memory.md`. Improvements to the content come back as ordinary diffs. |
 | 31 | Ordering with Sketch | No clash. The memory is per developer, set up once and outliving every app. Sketch is per app. The repo memory is created when it's needed. |
-| 32 | Content first | Write `Content/` first and use it as a real memory on the Motif repos, then build the app around content that's been tried. |
+| 32 | Content first | ~~Write `Content/` first and use it as a real memory on the Motif repos, then build the app around content that's been tried.~~ Replaced: the app is built now (#33), and the content is tried through the memories it writes. |
+
+## Version 1
+
+Agreed while questioning the design before building the first version. How it's built is in [design.md](design.md).
+
+| # | Topic | Decision |
+|---|---|---|
+| 33 | Scope | Version 1 is setup only: make the choices, write the memory out, and show the next steps. The catalogue (#28) comes in a later version. |
+| 34 | Role facts | Each role's facts sit in front matter at the top of its note in `Content/`: whether it's core, and the temporary docs it writes and reads. The app reads and strips it, so a new role is one `Content/` file and no C#. The stages' order comes from the Workflow's steps. |
+| 35 | Tailoring | Text that depends on a choice is wrapped in tags in `Content/` (HTML comments), and the app keeps or drops it exactly, then strips every tag. A list item that starts with a link to a note that isn't written is dropped without a tag. The written memory has no tags and no broken links. |
+| 36 | Guidelines | The General guidelines are always written, so roles' links to them never break, but any single guideline in them can be unticked. Other packs (C#, Motif) can be left out whole, and General's links to them go with them. A section left empty is dropped. |
+| 37 | Writing | The app writes into a folder the Developer picks, only if it's empty or holds only `.git`. Otherwise it stops, says why, and writes nothing. A zip download is always offered, and is the only way in browsers without a folder picker. |
+| 38 | Pointer path | The browser never learns where the picked folder is, so the next steps ask for the memory's path, and fill it into each agent's pointer as it's typed. Left empty, the pointer shows a placeholder. Nothing is remembered. |
+| 39 | Layout | One setup page, with a section per choice and every default already chosen, so a memory can be written at once. The workflow warnings show beside the stages. After writing, the page shows the next steps. |
+| 40 | Content in | The Bundled Content adapter embeds `Content/` as resources, rather than fetching static files over HTTP, which can't list a folder. Specs read the real content through the real adapter. |
 
 ## Still open
 
-- **Content in the plan.** `Content/` isn't a project, so the solution plan can't show it yet. Motif Sketch may one day want non-project folders in a plan.
+- **Content in the plan.** `Content/` isn't a project, so the solution plan can't show it yet, though the Bundled Content adapter now embeds it (#40). Motif Sketch may one day want non-project folders in a plan.
 - **More agents.** Which other agents' instructions files the pointer screen covers, once someone asks.

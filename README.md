@@ -39,14 +39,15 @@ These pictures are exported by [Motif Sketch](https://motif-dotnet.github.io/Mot
 
 ## Status
 
-**Next up.** Designed, with the solution plan stubbed out but no functionality yet. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Next it gets used as a real memory on the Motif repos. The app gets built after that, around content that's been tried. The decisions and open questions are in [decisions.md](decisions.md).
+**Next up.** Designed, with the solution plan stubbed out. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Version 1, setup only, is designed in [design.md](design.md) and gets built next. The decisions and open questions are in [decisions.md](decisions.md).
 
 ## Files
 
 | File | What it is |
 |---|---|
-| [Content/](Content/README.md) | The memory's roles, workflow and guidelines, as Markdown. With every option chosen, it's a complete memory |
+| [Content/](Content/README.md) | The roles, workflow and guidelines the app writes memories from, as Markdown with tags for the app. It isn't a memory itself |
 | [decisions.md](decisions.md) | The decisions so far and why, and what's still open |
+| [design.md](design.md) | How version 1 is built: the content format, the ports, the page and the specs |
 | [motif/](motif/README.md) | Motif Memory's own design, solution plan, diagrams and glossary |
 | [AGENTS.md](AGENTS.md) | Where coding agents start |
 

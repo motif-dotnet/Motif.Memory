@@ -83,7 +83,7 @@ The core role that looks after the memory, and how lessons find their way in. It
 
 ## Memory Content
 
-The driven port that reads the role and pack texts the memory is made from. Its real adapter reads the Markdown in `Content/`, shipped with the app.
+The driven port that reads the role and pack texts the memory is made from. Its real adapter reads the Markdown in `Content/`, embedded in the app.
 
 - **Kind:** port
 - **Avoid:** templates, resources
@@ -126,6 +126,15 @@ This app: it sets up an agent's external memory, with the roles, workflow and de
 - **Kind:** system
 - **Avoid:** memory tool, Memory app
 - **Sketch:** `4d3e0a01`
+
+## Next steps
+
+What the page shows once the memory is written: making it a git repo, its first commit, and the pointer for each agent ticked, with the memory's path filled in. The browser can't run git, so the Developer does these.
+
+- **Kind:** domain concept
+- **Avoid:** summary, finish screen
+- **Status:** proposed
+- **See also:** [Pointer](#pointer), [Setup](#setup)
 
 ## Pack
 
@@ -172,6 +181,15 @@ A part the agent plays, such as the Bug Fixer or the Memory Auditor. The Develop
 - **Status:** proposed
 - **See also:** [Core](#core), [Stage](#stage), [Workflow](#workflow)
 
+## Role facts
+
+What the app needs to know about a role that its text doesn't say plainly: whether it's core, and the temporary docs it writes and reads. Kept as front matter at the top of the role's note in `Content/`, and stripped from the memory written.
+
+- **Kind:** domain concept
+- **Avoid:** metadata, manifest
+- **Status:** proposed
+- **See also:** [Role](#role), [Temporary doc](#temporary-doc)
+
 ## Rule
 
 One agreed line in a memory note, such as one of a role's Rules or a design guideline. The Memory Editor writes it, and only with the user's OK.
@@ -206,6 +224,15 @@ The first file of the memory, `Start here.md`, the one the pointer names. It onl
 - **Avoid:** index, root, home
 - **Status:** proposed
 - **See also:** [Memory](#memory), [Pointer](#pointer)
+
+## Tag
+
+A mark in `Content/`, written as an HTML comment, around text that's written only when a choice is made, such as a role being ticked. The app keeps or drops the text and strips every tag, so the memory written has none.
+
+- **Kind:** domain concept
+- **Avoid:** marker, directive, placeholder
+- **Status:** proposed
+- **See also:** [Memory Content](#memory-content), [Setup](#setup)
 
 ## Temporary doc
 
