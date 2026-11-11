@@ -6,7 +6,7 @@ The format is described in the [Motif Glossary design note](https://github.com/m
 
 In prose, the names of specific things (roles, ports, actors, storage) take Title Case: the Memory Auditor, the Developer. Other terms stay lower case: lesson, temporary doc. Use italics only when writing about the word itself. A doc for people may link a term to its entry the first time it appears.
 
-Nothing is built yet, so most terms are proposed, and none has an **In code** field.
+Only the plan's stubs are built so far, so most terms are proposed, and none has an **In code** field yet.
 
 ## Catalogue
 
