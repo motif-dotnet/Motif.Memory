@@ -16,7 +16,7 @@ An external memory for coding agents, set up with [Motif Memory](https://github.
    | Claude Code | `~/.claude/CLAUDE.md` |
    | Codex, and other agents that read `AGENTS.md` | `~/.codex/AGENTS.md`, or the agent's own global instructions file |
 
-   That line is all the instructions file holds about the memory. Everything else lives here.
+   That line is all the instructions file holds about the memory. Everything else lives here, except rules that must apply even when the memory isn't read, such as ones overriding the agent's own defaults.
 
 ## How it grows
 

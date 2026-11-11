@@ -74,7 +74,7 @@ An agent's external memory: Markdown files in a git repo of their own, found a l
 
 ## Memory Auditor
 
-The core role that looks after the memory, and how lessons find their way in. It proposes rules from the user's corrections, flags rules that are unclear, duplicated or stale, harvests temporary docs before they're deleted, and checks that discovery and the layers still hold. It runs when asked, and the Coordinator suggests it before a branch merges.
+The core role that looks after the memory, and how lessons find their way in. It proposes rules from the user's corrections, flags rules that are unclear, duplicated or stale, harvests temporary docs before they're deleted, and checks that discovery and the layers still hold. It runs when asked, and the Coordinator suggests it before a piece of work is finished.
 
 - **Kind:** domain concept
 - **Avoid:** curator, librarian
@@ -156,7 +156,7 @@ The shared part of the memory for one repo: a file in that repo's `motif/` folde
 
 ## Repo note
 
-A private note about one repo, kept in the memory's `Repos/` folder: what only the user needs there, such as their remotes, accounts or machine.
+A private note about one repo, or about every repo of one owner such as an organisation, kept in the memory's `Repos/` folder and named after the repo or owner: what only the user needs there, such as their remotes, accounts, boards or machine.
 
 - **Kind:** domain concept
 - **Avoid:** codebase note
@@ -209,7 +209,7 @@ The first file of the memory, `Start here.md`, the one the pointer names. It onl
 
 ## Temporary doc
 
-A working note for one branch, such as the progress doc or the bug list, kept in `_TEMP_DO_NOT_MERGE/<branch>/` and deleted before merging, after the Memory Auditor has taken any lessons from it.
+A working note for one piece of work, such as the progress doc or the bug list, kept in `_TEMP_DO_NOT_MERGE/` and deleted when the work is finished, after the Memory Auditor has taken any lessons from it. On a branch it's committed there and deleted before merging; straight on the main branch it's never committed.
 
 - **Kind:** domain concept
 - **Avoid:** change doc, handoff, ticket, scratch file
@@ -227,7 +227,7 @@ The driving port people use. Its real adapter is the Web App: the setup page and
 
 ## Workflow
 
-The ideal order of stages for a branch's work, from start to merge, with the roles that play them. Steps loop back or are skipped as the work needs. The Developer orders the stages at setup.
+The ideal order of stages for a piece of work, on a branch or straight on the main branch, from start to finish, with the roles that play them. Steps loop back or are skipped as the work needs. The Developer orders the stages at setup.
 
 - **Kind:** domain concept
 - **Avoid:** process, pipeline

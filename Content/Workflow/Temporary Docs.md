@@ -1,14 +1,18 @@
-Temporary docs are working notes for a branch. They all live in `_TEMP_DO_NOT_MERGE/<branch>/` at the repo root, away from the repo's real docs. Delete the folder before merging. If any of it turns up in a merge, that's a mistake.
+Temporary docs are working notes for a piece of work. They all live in one folder at the repo root, away from the repo's real docs, and the folder is deleted when the work is finished. They never reach the main branch's history.
 
-Each doc starts with:
+- **On a branch:** the folder is `_TEMP_DO_NOT_MERGE/<branch>/`, committed on the branch, and deleted before merging. If any of it turns up in a merge, that's a mistake. Each doc starts with:
 
-> Temporary notes. **Do not merge onto `<base branch>`.** Delete before merging the branch.
+  > Temporary notes. **Do not merge onto `<base branch>`.** Delete before merging the branch.
+
+- **Straight on the main branch:** the folder is `_TEMP_DO_NOT_MERGE/<name of the work>/`, listed in `.git/info/exclude` so it's never committed. Each doc starts with:
+
+  > Temporary notes. **Never commit.** Delete when the work is finished.
 
 If the doc already exists, add to it rather than starting another. In a .NET repo, also list the docs in a `_TEMP_DO_NOT_MERGE` solution folder in the main solution, so the user can see them, and remove the solution folder when deleting the docs.
 
-They're deleted before merging, so anything a future reader of the code needs, such as why a bug was left alone, also goes in a comment by the code.
+They're deleted, so anything a future reader of the code needs, such as why a bug was left alone, also goes in a comment by the code.
 
-- Progress (`PROGRESS.md`): what's been done, what's next, open questions for the user and their answers once decided, and the commit the branch started from. Each role adds its own finished part; the Coordinator keeps the whole picture current.
+- Progress (`PROGRESS.md`): what's been done, what's next, open questions for the user and their answers once decided, and the commit the work started from. Each role adds its own finished part; the Coordinator keeps the whole picture current.
 - Behaviour checklist (`BEHAVIOUR_CHECKLIST.md`): what the user was happy with after their first round of testing, as numbered points from the user's point of view. The numbers run on across sections, so each item can be pointed to. It must keep working through tidying, refactoring and bug fixing, unless the user redefines it.
 - Code review (`CODE_REVIEW.md`): the findings, most severe first, then a "Checked and OK" section.
 - Bug list (`BUGS.md`): one numbered item per bug, saying where it is and how it shows up. Strike a fixed bug through (`~~...~~`) and add a line saying how it was fixed. If a bug is left alone, say why. Never delete items.
