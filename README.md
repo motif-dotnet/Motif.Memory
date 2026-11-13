@@ -1,6 +1,6 @@
 # Motif Memory
 
-The next tool in the **[Motif.NET](https://github.com/motif-dotnet)** suite. It sets up an agent's external memory: a starter git repo of Markdown files, set out so an agent finds what it needs a level at a time. The memory grows as it's used, so the tool's job is the first version: the files, the structure and the roles that suit your way of working.
+A tool in the **[Motif.NET](https://github.com/motif-dotnet)** suite. It sets up an agent's external memory: a starter git repo of Markdown files, set out so an agent finds what it needs a level at a time. The memory grows as it's used, so the tool's job is the first version: the files, the structure and the roles that suit your way of working.
 
 ## The idea
 
@@ -38,7 +38,7 @@ These pictures are exported by [Motif Sketch](https://motif-dotnet.github.io/Mot
 
 ## Status
 
-**Next up.** Designed, with the solution plan stubbed out. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Version 1, setup only, is designed in [design.md](design.md) and built, but not yet launched. The decisions and open questions are in [decisions.md](decisions.md).
+**Trial.** Version 1, setup only, is live: [try it](https://motif-dotnet.github.io/Motif.Memory/). The solution plan is stubbed out. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Version 1 is designed in [design.md](design.md). The decisions and open questions are in [decisions.md](decisions.md).
 
 ## Files
 
