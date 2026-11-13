@@ -1,3 +1,7 @@
+---
+when: workflow
+---
+
 The ideal order for a piece of work, on a branch or straight on the main branch, from start to finish. Finishing means the merge, or for work straight on the main branch, its last commit. In practice, steps loop back or come out of order. For example, after a big fix, review again, and if the tidy finds bugs, go back to bug fixing. Skip steps that don't fit the change, such as a behaviour checklist for server setup, and note which ones in the progress doc.
 
 ### When your part is done
@@ -13,13 +17,17 @@ Add it to the work's progress [temporary doc](Temporary%20Docs.md), starting one
 5. [Code Reviewer](../Roles/Code%20Reviewer.md): review the change.
 6. [Bug Fixer](../Roles/Bug%20Fixer.md): work through the bug list.
 7. [Code Tidier](../Roles/Code%20Tidier.md): tidy, and pass findings that change behaviour to the bug list.
-8. User: code review. The [Review Responder](../Roles/Review%20Responder.md) makes the changes asked for, and proposes general rules from them.
+8. User: code review.<!-- if Review Responder --> The [Review Responder](../Roles/Review%20Responder.md) makes the changes asked for, and proposes general rules from them.<!-- end -->
 9. [Tester](../Roles/Tester.md): run what an agent can. The rest goes in the manual tests for the user.
 10. User: manual testing.
 
 ### Ready to finish when
 
+<!-- if BUGS.md -->
 - Every bug is fixed, or left with a reason the user has agreed to.
-- The user has tried it, and every manual test is ticked off, passed by the Tester and accepted by the user, or skipped with a reason they agreed to.
+<!-- end -->
+- The user has tried it<!-- if MANUAL_TESTS.md -->, and every manual test is ticked off,<!-- end --><!-- if Tester --> passed by the Tester and<!-- end --><!-- if MANUAL_TESTS.md --> accepted by the user, or skipped with a reason they agreed to<!-- end -->.
+<!-- if Tester and BEHAVIOUR_CHECKLIST.md -->
 - The Tester has walked through the behaviour checklist against the automated checks and manual tests, and every item is covered.
+<!-- end -->
 - The work's temporary docs have been deleted.

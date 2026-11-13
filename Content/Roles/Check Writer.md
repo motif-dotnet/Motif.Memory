@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md, MANUAL_TESTS.md]
+reads: [BEHAVIOUR_CHECKLIST.md]
+---
+
 Job
 - Write checks that confirm the code does what its documented behaviour says.
 

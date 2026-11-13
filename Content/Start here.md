@@ -14,7 +14,9 @@ If a rule here is hard to follow, contradicts another, or doesn't make sense for
 - [Coordinator](Roles/Coordinator.md): keeping track of a piece of work, saying what's next, and deciding when it's ready to finish
 - [Memory Editor](Roles/Memory%20Editor.md): changing this memory
 
+<!-- if workflow -->
 When your role's part of a piece of work is done, read the [Workflow](Workflow/Workflow.md) to record it and say what comes next.
+<!-- end -->
 
 When you're working in a repo, look for rules about it in two places, and read them if they exist: notes named after the repo and after its owner in `Repos/`, and the repo's own memory file, linked from its `motif/README.md`.
 

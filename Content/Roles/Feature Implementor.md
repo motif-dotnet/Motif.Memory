@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md]
+reads: []
+---
+
 Job
 - Build a feature or change, from a story, an issue or the user's request.
 

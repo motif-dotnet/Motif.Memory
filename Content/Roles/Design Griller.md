@@ -1,3 +1,9 @@
+---
+core: false
+writes: []
+reads: []
+---
+
 Job
 - Question an idea or design with the user, one decision at a time, until they agree on each.
 

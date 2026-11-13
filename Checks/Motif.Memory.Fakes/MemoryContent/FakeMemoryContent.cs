@@ -1,5 +1,9 @@
 namespace Motif.Memory.Fakes;
 
-public sealed class FakeMemoryContent : MemoryContent
+/// <summary>
+/// Content a spec makes up, for format rules the real content doesn't use.
+/// </summary>
+public sealed class FakeMemoryContent(params ContentFile[] files) : MemoryContent
 {
+    public IReadOnlyList<ContentFile> Files { get; } = files;
 }

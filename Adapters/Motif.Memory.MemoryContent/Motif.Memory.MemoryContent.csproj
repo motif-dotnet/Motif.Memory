@@ -11,4 +11,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Every file of Content/, dot-files too, named by its path there. -->
+    <EmbeddedResource Include="..\..\Content\**\*" LogicalName="Content/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
 </Project>

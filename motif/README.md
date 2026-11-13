@@ -20,4 +20,4 @@ This repo is designed with the [Motif.NET](https://github.com/motif-dotnet) tool
 
 ## In this repo
 
-The plan has been stubbed out, with no functionality yet, and most of the glossary is *proposed*. The sketch follows the decisions in [decisions.md](../decisions.md), made after reviewing an example memory. The plan and diagrams were updated by hand to match it; re-export them from Motif Sketch next time it's opened.
+Version 1 is built, as [design.md](../design.md) describes, and most of the glossary is still *proposed*. The sketch follows the decisions in [decisions.md](../decisions.md), made after reviewing an example memory. The plan and diagrams were updated by hand to match it, and are behind it: re-export them from Motif Sketch next time it's opened. The code has two references the plan's §3 doesn't list: the Web App knows the real adapters, as the composition root, and the specs read the real content through the Bundled Content adapter.

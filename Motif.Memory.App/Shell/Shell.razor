@@ -1,0 +1,173 @@
+@namespace Motif.Memory.App
+@implements IDisposable
+@inject MotifMemoryApplication App
+@inject Browser Browser
+@inject Toaster Toaster
+
+<PageTitle>Motif Memory</PageTitle>
+
+@if (started)
+{
+<div class="app" @onclick="CloseMenus">
+    <header class="appbar">
+        <ToolSwitcher Current="memory" Open="@(menu == "tools")" OnToggle="@(() => Toggle("tools"))" />
+        <div class="spacer"></div>
+        <ThemeMenu Theme="@theme" ThemeChanged="SetTheme" Open="@(menu == "theme")" OnToggle="@(() => Toggle("theme"))" />
+        <button class="cmd icon" title="Help" @onclick="ToggleHelp" @onclick:stopPropagation="true">@SuiteIcons.Help</button>
+    </header>
+
+    <main class="scroll">
+            <div class="page">
+                <h1>Set up your agent's memory</h1>
+                <p class="lead">Choose the roles, workflow and design guidelines that suit your way of working. Every choice has a default, so you can write the memory straight away and tailor it later.</p>
+
+                <details class="choice" open>
+                    <summary><h2>Roles</h2><span class="count">@App.Roles.Count(r => r.Ticked) of @App.Roles.Count</span></summary>
+                    <p class="what">The parts the agent can play. Each brings its stage in the workflow and the temporary docs it writes.</p>
+                    <ul class="ticks">
+                        @foreach (var role in App.Roles)
+                        {
+                            <li>
+                                <label class="tick @(role.Core ? "fixed" : "")">
+                                    <input type="checkbox" checked="@role.Ticked" disabled="@role.Core"
+                                           @onchange="e => App.TickRole(role.Name, Checked(e))" />
+                                    <span><b>@role.Name</b>@if (role.Core) {<span class="tag">core</span>}<span class="line">@role.Line</span></span>
+                                </label>
+                            </li>
+                        }
+                    </ul>
+                </details>
+
+                <details class="choice" open>
+                    <summary>
+                        <h2>Workflow</h2>
+                        <span class="count">@(App.Stages.All(s => s.IsUsers) ? "none" : Plural(App.Stages.Count, "stage", "stages"))</span>
+                        @if (App.Stages.Any(s => s.Warning != ""))
+                        {
+                            <span class="count warn">@Icons.Warning @Plural(App.Stages.Count(s => s.Warning != ""), "warning", "warnings")</span>
+                        }
+                    </summary>
+                    <p class="what">The ideal order of stages for a piece of work. Drag a stage to its place, or move it up or down; a warning shows where a stage would read a temporary doc no earlier stage writes. Your last manual testing stays last.</p>
+                    @if (App.Stages.All(s => s.IsUsers))
+                    {
+                        <p class="muted">No role with a stage is ticked, so the memory has no workflow.</p>
+                    }
+                    else
+                    {
+                        <ol class="stages">
+                            @foreach (var stage in App.Stages)
+                            {
+                                <li class="stage @(stage.IsUsers ? "users" : "") @(stage.Warning != "" ? "warned" : "") @DragMark(stage)"
+                                    draggable="@(stage.Pinned ? "false" : "true")" @ondragstart="() => Drag(stage.Id)" @ondragend="EndDrag"
+                                    @ondragenter="() => DragOver(stage.Id)" @ondragenter:preventDefault @ondragover:preventDefault
+                                    @ondrop="() => Drop(stage.Id)" @ondrop:preventDefault>
+                                    <span class="who">@stage.Name</span>
+                                    <span class="summary">@stage.Summary</span>
+                                    @if (stage.Warning != "")
+                                    {
+                                        <span class="warning">@Icons.Warning @stage.Warning</span>
+                                    }
+                                    @if (stage.Pinned)
+                                    {
+                                        <span class="moves muted" title="The work isn't finished until you've tried it.">Always last</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="moves">
+                                            <button class="ghost small" title="Move up" disabled="@(!stage.CanMoveUp)" @onclick="() => App.MoveStageUp(stage.Id)">@Icons.Up</button>
+                                            <button class="ghost small" title="Move down" disabled="@(!stage.CanMoveDown)" @onclick="() => App.MoveStageDown(stage.Id)">@Icons.Down</button>
+                                        </span>
+                                    }
+                                </li>
+                            }
+                        </ol>
+                    }
+                </details>
+
+                <details class="choice" open>
+                    <summary><h2>Guidelines</h2><span class="count">@App.Packs.Where(p => p.Ticked).Sum(p => p.TickedCount) of @App.Packs.Sum(p => p.Count)</span></summary>
+                    <p class="what">Design guidelines, in packs. Untick any single one. The General pack is always written; leave out the others if they don't suit you.</p>
+                    @foreach (var pack in App.Packs)
+                    {
+                        <details class="pack">
+                            <summary>
+                                <label class="tick @(pack.Optional ? "" : "fixed")" @onclick:stopPropagation="true">
+                                    <input type="checkbox" checked="@pack.Ticked" disabled="@(!pack.Optional)"
+                                           @onchange="e => App.TickPack(pack.Name, Checked(e))" />
+                                    <b>@pack.Name</b>
+                                </label>
+                                <span class="count">@(pack.Ticked ? $"{pack.TickedCount} of {pack.Count}" : "left out")</span>
+                            </summary>
+                            @foreach (var section in pack.Sections)
+                            {
+                                <h3>@section.Name</h3>
+                                <ul class="ticks">
+                                    @foreach (var guideline in section.Guidelines)
+                                    {
+                                        <li>
+                                            <label class="tick">
+                                                <input type="checkbox" checked="@guideline.Ticked" disabled="@(!pack.Ticked)"
+                                                       @onchange="e => App.TickGuideline(guideline.Id, Checked(e))" />
+                                                <span class="line">@guideline.Text</span>
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                        </details>
+                    }
+                </details>
+
+                <details class="choice" open>
+                    <summary><h2>Committing</h2><span class="count">@Committings.First(c => c.Value == App.Committing).Label</span></summary>
+                    <p class="what">The agent never changes the memory without your OK. This is when it commits the changes you agree.</p>
+                    <div class="radios" role="radiogroup" aria-label="Committing">
+                        @foreach (var (value, label, line) in Committings)
+                        {
+                            <label class="tick">
+                                <input type="radio" name="committing" checked="@(App.Committing == value)" @onchange="() => App.ChooseCommitting(value)" />
+                                <span><b>@label</b><span class="line">@line</span></span>
+                            </label>
+                        }
+                    </div>
+                </details>
+
+                <div class="write">
+                    @if (App.CanPickFolder)
+                    {
+                        <button class="primary" disabled="@busy" @onclick="WriteToFolder">@Icons.Folder Write to a folder…</button>
+                        <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
+                        <span class="muted">The folder must be empty, or a fresh git repo with nothing in it but <code>.git</code>.</span>
+                    }
+                    else
+                    {
+                        <button class="primary" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
+                        <span class="muted">This browser can't write to a folder, so the memory comes as a zip.</span>
+                    }
+                </div>
+                <p class="muted after">Then point your agent at the memory's <code>@App.SetupNote</code>: it makes the folder a git repo, adds the one line its instructions file needs, and deletes the note.</p>
+            </div>
+    </main>
+
+    @if (helpOpen)
+    {
+        <HelpDialog Current="memory" OnClose="@(() => helpOpen = false)">
+            <h4>What it makes</h4>
+            <ul>
+                <li>A starter <b>memory</b> for coding agents: Markdown files in a folder that becomes a git repo of its own.</li>
+                <li>The agent starts at <code>Start here.md</code> and reads only what the task in hand needs, never the whole memory.</li>
+                <li>It grows as it's used: the Memory Auditor proposes rules from your corrections, and nothing changes without your OK.</li>
+            </ul>
+            <h4>Three layers</h4>
+            <ul>
+                <li><b>The memory</b>: the roles, workflow and guidelines, private to you.</li>
+                <li><b>Repo notes</b> in its <code>Repos/</code> folder: your own setup for one repo, such as remotes and accounts.</li>
+                <li><b>Repo memory</b>: a file in each repo's <code>motif/</code> folder, committed, for what anyone working on that repo needs.</li>
+            </ul>
+            <p class="help">Everything happens in this browser: nothing is uploaded, and there's no sign-in. Motif Memory writes only inside the folder you pick.</p>
+        </HelpDialog>
+    }
+
+    <ToastList Toaster="Toaster" />
+</div>
+}

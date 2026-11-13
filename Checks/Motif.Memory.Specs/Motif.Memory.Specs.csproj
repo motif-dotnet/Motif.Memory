@@ -29,6 +29,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Motif.Memory\Motif.Memory.UseCases\Motif.Memory.UseCases.csproj" />
     <ProjectReference Include="..\Motif.Memory.Fakes\Motif.Memory.Fakes.csproj" />
+    <!-- Many specs are about the real content, so they read it through the real adapter (design.md). -->
+    <ProjectReference Include="..\..\Adapters\Motif.Memory.MemoryContent\Motif.Memory.MemoryContent.csproj" />
   </ItemGroup>
 
 </Project>

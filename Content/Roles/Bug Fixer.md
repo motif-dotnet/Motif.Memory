@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md, BUGS.md, BEHAVIOUR_CHECKLIST.md, MANUAL_TESTS.md]
+reads: []
+---
+
 Job
 - Fix bugs in the code, perhaps ones a code review found.
 

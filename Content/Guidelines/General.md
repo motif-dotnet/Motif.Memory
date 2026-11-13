@@ -1,7 +1,15 @@
-These apply in every language. Also read the guidelines for the language you're writing, when there's a note for it: [C#](CSharp.md). Read the [Motif guidelines](Motif.md) when designing types, naming things or writing checks. Put a rule here unless it only makes sense in one language.
+---
+pack: General
+optional: false
+---
+
+These apply in every language. Also read the guidelines for the language you're writing, when there's a note for it<!-- if C# -->: [C#](CSharp.md)<!-- end -->.<!-- if Motif --> Read the [Motif guidelines](Motif.md) when designing types, naming things or writing checks.<!-- end --> Put a rule here unless it only makes sense in one language.
 
 ### Hard Rules
+<!-- if BEHAVIOUR_CHECKLIST.md -->
 - Keep every behaviour in the work's behaviour checklist ([temporary doc](../Workflow/Temporary%20Docs.md)) working.
+<!-- end -->
+- Run a dev server, or anything else that keeps running, as a background task of your session, and tell the user it stops when the session ends.
 
 ### Prefer X over Y
 - Prefer the shortest real word that's clear in context (`next`, `min`, `big`) over cryptic names (`t`, `p`, `ret`) or over-spelt compounds (`nextIndex`, `minValue`). One letter only for loop indices.

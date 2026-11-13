@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md, BUGS.md, CODE_REVIEW.md]
+reads: []
+---
+
 Job
 - Review a diff, branch or pull request for bugs and departures from the guidelines.
 

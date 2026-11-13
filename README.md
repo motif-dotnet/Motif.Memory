@@ -19,9 +19,8 @@ Every memory has a core: the starting point, a Memory Editor and a Memory Audito
 - **The workflow's order.** The stages come in a default order you can change, with a gentle warning if a stage would need a doc nothing earlier writes.
 - **Design guidelines**, in packs such as General and C#, with single guidelines you can untick. Only what needs judgement: anything a formatter or analyser can enforce belongs in `.editorconfig`, which Motif Sketch's solution plan sets up.
 - **When memory changes are committed**: once you've agreed them (the default), only when you ask, or by you.
-- **Obsidian**, if you'd like to read the memory there.
 
-At the end, the app shows the pointer to paste into each agent's instructions file. It writes nothing outside the memory folder.
+The memory comes with a setup note: point your agent at it, and it makes the memory a git repo, adds the pointer to its own instructions file, and deletes the note. The app writes nothing outside the memory folder.
 
 ## Design
 
@@ -39,7 +38,7 @@ These pictures are exported by [Motif Sketch](https://motif-dotnet.github.io/Mot
 
 ## Status
 
-**Next up.** Designed, with the solution plan stubbed out. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Version 1, setup only, is designed in [design.md](design.md) and gets built next. The decisions and open questions are in [decisions.md](decisions.md).
+**Next up.** Designed, with the solution plan stubbed out. The design comes from reviewing an example memory that grew through real use. The first content is written: the generic roles and guidelines, as Markdown in [Content/](Content/README.md). Version 1, setup only, is designed in [design.md](design.md) and built, but not yet launched. The decisions and open questions are in [decisions.md](decisions.md).
 
 ## Files
 

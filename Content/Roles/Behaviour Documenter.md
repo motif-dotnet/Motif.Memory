@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md, BEHAVIOUR_CHECKLIST.md]
+reads: []
+---
+
 Job
 - Write down how a feature should behave, so others can build, check and test against it.
 

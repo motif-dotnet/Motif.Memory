@@ -40,16 +40,16 @@ Motif Memory sets up a git repo of Markdown files as an agent's external memory.
 | 22 | Languages | The core and roles are language-neutral. Motif is opinionated that C# is the default, so C# is the only language pack at first. Others (VB, F#, HTML, CSS, JavaScript) are grown through use: the Memory Editor creates `Guidelines/<Language>.md` when the first rule for that language comes up. |
 | 23 | Committing | No change to the memory without the user's OK, always. When to commit is a choice: once agreed (the default, one commit per set of edits, named after the work it came from, pushed if there's a remote), only when asked, or never (the Developer commits). No branches or pull requests for the memory. |
 | 24 | Memory Auditor | Proposes rules from the user's corrections and new roles where none fits; flags rules that are unclear, contradictory, duplicated, unhelpful or no longer true, and broken links and empty sections; harvests temporary docs before they're deleted; checks the discovery rules and the layers. It runs when the user says "audit memory", and the Coordinator suggests one when a piece of work is ready to finish. It isn't a workflow stage. |
-| 25 | Obsidian | A tick at setup, off by default. It adds the `.obsidian/` settings that keep links relative Markdown, and the `.gitignore` lines for Obsidian's per-device files. |
+| 25 | Obsidian | ~~A tick at setup, off by default. It adds the `.obsidian/` settings that keep links relative Markdown, and the `.gitignore` lines for Obsidian's per-device files.~~ Dropped (#41). |
 
 ## The app
 
 | # | Topic | Decision |
 |---|---|---|
 | 26 | Writes, doesn't plan | The app writes the memory's files itself, rather than a plan an agent builds from. The memory is prose, not code, and tailoring afterwards is the Memory Editor's and Auditor's job. |
-| 27 | Pointer | The app writes only inside the memory folder. At the end it shows the pointer for each agent ticked (Claude Code, Codex via `AGENTS.md`, or just the line), for the Developer to paste. The memory's README repeats the steps, for setting up on another machine. The instructions file holds nothing else, except rules that must apply even when the memory isn't read, such as ones overriding the agent's own defaults. |
+| 27 | Pointer | The app writes only inside the memory folder. ~~At the end it shows the pointer for each agent ticked (Claude Code, Codex via `AGENTS.md`, or just the line), for the Developer to paste.~~ The agent adds its own pointer, through the setup note (#42). The memory's README repeats the steps, for setting up on another machine. The instructions file holds nothing else, except rules that must apply even when the memory isn't read, such as ones overriding the agent's own defaults. |
 | 28 | Setup plus parts | The app never reads an existing memory. It's also a catalogue: any single role or pack can be viewed or downloaded, with its stage and temporary docs, and the Memory Editor merges it in. The memory's README says where the catalogue is. |
-| 29 | Form | A Blazor WebAssembly app on GitHub Pages. A `dotnet new` template was considered, but ordering stages, unticking single guidelines, the warnings and the catalogue all need a page. It writes to a folder the Developer picks, or a zip. The browser can't run git, so the last screen gives the next steps. |
+| 29 | Form | A Blazor WebAssembly app on GitHub Pages. A `dotnet new` template was considered, but ordering stages, unticking single guidelines, the warnings and the catalogue all need a page. It writes to a folder the Developer picks, or a zip. The browser can't run git, so ~~the last screen gives the next steps~~ an agent finishes the setup (#42). |
 | 30 | Content | The role and pack texts are Markdown in `Content/`, embedded in the app and read through the Memory Content port. `Content/` is only the app's input, not a memory: no agent follows it, so it can carry markup for the app (#35, #36) that the app strips out. Agents working on this repo keep their rules in `motif/memory.md`. Improvements to the content come back as ordinary diffs. |
 | 31 | Ordering with Sketch | No clash. The memory is per developer, set up once and outliving every app. Sketch is per app. The repo memory is created when it's needed. |
 | 32 | Content first | ~~Write `Content/` first and use it as a real memory on the Motif repos, then build the app around content that's been tried.~~ Replaced: the app is built now (#33), and the content is tried through the memories it writes. |
@@ -60,16 +60,31 @@ Agreed while questioning the design before building the first version. How it's 
 
 | # | Topic | Decision |
 |---|---|---|
-| 33 | Scope | Version 1 is setup only: make the choices, write the memory out, and show the next steps. The catalogue (#28) comes in a later version. |
+| 33 | Scope | Version 1 is setup only: make the choices and write the memory out. The catalogue (#28) comes in a later version. |
 | 34 | Role facts | Each role's facts sit in front matter at the top of its note in `Content/`: whether it's core, and the temporary docs it writes and reads. The app reads and strips it, so a new role is one `Content/` file and no C#. The stages' order comes from the Workflow's steps. |
 | 35 | Tailoring | Text that depends on a choice is wrapped in tags in `Content/` (HTML comments), and the app keeps or drops it exactly, then strips every tag. A list item that starts with a link to a note that isn't written is dropped without a tag. The written memory has no tags and no broken links. |
 | 36 | Guidelines | The General guidelines are always written, so roles' links to them never break, but any single guideline in them can be unticked. Other packs (C#, Motif) can be left out whole, and General's links to them go with them. A section left empty is dropped. |
 | 37 | Writing | The app writes into a folder the Developer picks, only if it's empty or holds only `.git`. Otherwise it stops, says why, and writes nothing. A zip download is always offered, and is the only way in browsers without a folder picker. |
-| 38 | Pointer path | The browser never learns where the picked folder is, so the next steps ask for the memory's path, and fill it into each agent's pointer as it's typed. Left empty, the pointer shows a placeholder. Nothing is remembered. |
-| 39 | Layout | One setup page, with a section per choice and every default already chosen, so a memory can be written at once. The workflow warnings show beside the stages. After writing, the page shows the next steps. |
+| 38 | Pointer path | ~~The browser never learns where the picked folder is, so the next steps ask for the memory's path, and fill it into each agent's pointer as it's typed. Left empty, the pointer shows a placeholder. Nothing is remembered.~~ Replaced: the agent knows where the memory is, from the setup note it reads (#42). |
+| 39 | Layout | One setup page, with a section per choice and every default already chosen, so a memory can be written at once. The workflow warnings show beside the stages. ~~After writing, the page shows the next steps.~~ After writing, a toast says what to tell the agent (#44). |
 | 40 | Content in | The Bundled Content adapter embeds `Content/` as resources, rather than fetching static files over HTTP, which can't list a folder. Specs read the real content through the real adapter. |
+
+## Version 1, after trying it
+
+Agreed after trying the first build.
+
+| # | Topic | Decision |
+|---|---|---|
+| 41 | No Obsidian | The Obsidian tick is dropped (#25). Its files start with a dot, which browsers won't write into a folder, and the Developer can add Obsidian's settings themselves. |
+| 42 | Setup note | The browser can't run git or edit an agent's files, so the memory has a setup note, `Set up.md`, that the Developer points their agent at. The agent asks for an OK, runs `git init`, adds the pointer to its own instructions file (it knows which file it reads, and where the memory is), deletes the note, and makes the first commit. Nothing links to the note, and the memory never keeps it. The memory's README still has the steps, for another machine. |
+| 43 | No agent choice | With the agent adding its own pointer, the Agents choice and the next-steps page go. The setup note names the common instructions files, and says other agents need the same line. |
+| 44 | After writing | A toast gives the outcome and the sentence to tell the agent; the page stays on setup. The setup note's first commit follows the Committing choice (#23): with Never, the agent runs `git init` and leaves the commit to the user. |
+| 45 | A toast to act on | Ten seconds wasn't long enough to read the after-writing toast and act on it, so it stays until dismissed and has a Copy button for the sentence. The web kit's toaster does this for any toast that offers text to copy. A page can't open the browser's downloads, so there's no button for that. |
+| 46 | Dragging stages | A stage can be dragged onto another to take its place, with the stages between shifting by one. The up and down buttons stay: dragging needs a mouse, so they're the way to reorder by keyboard and on touch screens. The whole row is the handle, and a line on the stage under the pointer shows which side the dragged one will land. |
+| 47 | Pinned stage | The user's last stage, their manual testing, stays last: it can't be moved, and nothing moves below it. The workflow isn't ready to finish until the user has tried it, so nothing sensibly follows it. No other stage is pinned, and the stages aren't grouped into sections: the first stage stays free so the checks can come before the change, and the warnings already cover the order the temporary docs need. |
+| 48 | Closing sections | Each section of the setup page can be closed once it's dealt with, to clear the page. All start open, and nothing is remembered. A section's heading says what's chosen in it (how many roles or guidelines are ticked, how many stages, the committing choice), and the Workflow's heading counts its warnings, so a closed section hides nothing that matters. |
 
 ## Still open
 
 - **Content in the plan.** `Content/` isn't a project, so the solution plan can't show it yet, though the Bundled Content adapter now embeds it (#40). Motif Sketch may one day want non-project folders in a plan.
-- **More agents.** Which other agents' instructions files the pointer screen covers, once someone asks.
+- **More agents.** Which other agents' instructions files the setup note names, once someone asks.

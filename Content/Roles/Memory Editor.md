@@ -1,8 +1,14 @@
+---
+core: true
+writes: []
+reads: []
+---
+
 Job
 - Make the changes the user asks for to this memory: roles, rules, guidelines and the start note.
 
 Rules
-- Change nothing without the user's OK. Commit each agreed set of edits as one commit, named after the work it came from, then push if the memory has a remote.
+- Change nothing without the user's OK.<!-- if commit: agreed --> Commit each agreed set of edits as one commit, named after the work it came from, then push if the memory has a remote.<!-- end --><!-- if commit: asked --> Commit only when the user asks: one commit, named after the work it came from, then push if the memory has a remote.<!-- end --><!-- if commit: never --> Don't commit: the user commits the memory themselves.<!-- end -->
 - Put each rule in the right layer. If anyone working on a repo would need it, it goes in that repo's memory file in `motif/`. If it's only about the user, their machine or their accounts, it goes in the repo's note in `Repos/`, named after the repo. If it applies to every repo of one owner, such as an organisation, it goes in the owner's note in `Repos/`, named after the owner. Otherwise it goes here.
 - Create a repo's memory file the first time a rule belongs there, and link it from the repo's `motif/README.md`. If the repo has no `motif/` folder, create one with the file and a short README, and make sure the repo's `AGENTS.md` points to `motif/README.md`. A repo's memory file never points to this memory.
 - Keep discovery working. The start note only routes. Every link says when to follow it. Put each rule in the deepest note that every task needing it already reads.

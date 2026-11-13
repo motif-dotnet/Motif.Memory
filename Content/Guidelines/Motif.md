@@ -1,3 +1,8 @@
+---
+pack: Motif
+optional: true
+---
+
 Rules for designing types, naming things and writing checks, on top of the [General guidelines](General.md). They match the opinions of the [Motif.NET](https://github.com/motif-dotnet) tools, and hold whether or not a repo uses them.
 
 ### Prefer X over Y

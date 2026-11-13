@@ -4,7 +4,7 @@ How the first version is built. The why is in [decisions.md](decisions.md) (#33 
 
 ## What it does
 
-One page. The Developer makes the setup choices, every one with a default already chosen, then writes the memory to a folder or downloads it as a zip. The page then shows the next steps. There's no catalogue yet (#33), and the app never reads an existing memory (#28).
+One page. The Developer makes the setup choices, every one with a default already chosen, then writes the memory to a folder or downloads it as a zip. A toast then says what to tell their agent, which finishes the setup through the setup note (#42). There's no catalogue yet (#33), and the app never reads an existing memory (#28).
 
 The choices, in the page's order:
 
@@ -14,8 +14,6 @@ The choices, in the page's order:
 | Workflow | Move each stage up or down, the user's stages among them. A warning shows beside a stage that reads a temporary doc no earlier stage writes | Workflow.md's order |
 | Guidelines | Untick single guidelines in any pack; leave out whole packs other than General (#36) | Everything ticked |
 | Committing | When the memory's changes are committed: once agreed, only when asked, or never (the Developer commits) (#23) | Once agreed |
-| Agents | Which agents get a pointer: Claude Code, Codex, other | Claude Code |
-| Obsidian | Add Obsidian's settings (#25) | Off |
 
 Then **Write to a folder…** (where the browser has a folder picker) and **Download zip** (always).
 
@@ -77,7 +75,7 @@ Text written only when a condition holds is wrapped in an HTML comment pair (#35
 ```
 
 - **Block or inline.** A tag on a line of its own wraps whole lines, and goes with them. A tag inside a line wraps part of it: `Also read [C#](CSharp.md)<!-- if Motif -->, and the [Motif guidelines](Motif.md)<!-- end -->.`
-- **Conditions:** a role's name, a pack's name, a temporary doc's file name (true when a chosen role writes it), `workflow` (true when any workflow role is chosen), `Obsidian`, or `commit: agreed`, `commit: asked`, `commit: never`. Join several with ` and ` or with ` or `, but not both. No nesting.
+- **Conditions:** a role's name, a pack's name, a temporary doc's file name (true when a chosen role writes it), `workflow` (true when any workflow role is chosen), or `commit: agreed`, `commit: asked`, `commit: never`. Join several with ` and ` or with ` or `, but not both. No nesting.
 - An unknown condition, a tag left open or an `end` with no `if` is a content error, which a spec catches.
 
 ### Rules without tags
@@ -86,7 +84,6 @@ Text written only when a condition holds is wrapped in an HTML comment pair (#35
 - The Workflow's steps (the numbered list under `### The steps`) are written in the Developer's order and renumbered.
 - In a guidelines note, each top-level bullet under a `###` section is one guideline. A section with none left is dropped, heading and all.
 - More than one blank line in a row left behind by dropped text closes up to one.
-- `.obsidian/` and `.gitignore` in `Content/` are written only with `Obsidian`.
 
 ### Tags to add
 
@@ -107,20 +104,13 @@ What the current text needs, besides front matter. A spec (below) finds any that
 | `Roles/Memory Auditor.md` | The rule about temporary docs | `workflow` |
 | `Roles/Memory Editor.md` | The first rule's commit sentence, in three versions: "Commit each agreed set of edits as one commit, named after the work it came from, then push if the memory has a remote." / "Commit only when the user asks: one commit, named after the work it came from, then push if the memory has a remote." / "Don't commit: the user commits the memory themselves." | `commit: agreed` / `asked` / `never` |
 
-New files: `Content/.obsidian/app.json` (`{ "useMarkdownLinks": true, "newLinkFormat": "relative", "alwaysUpdateLinks": true }`), and `Content/.gitignore` with Obsidian's per-device files (`.obsidian/workspace.json`, `.obsidian/workspace-mobile.json`).
+New file: `Content/Set up.md`, the setup note (#42), with its commit step tagged `commit: agreed or commit: asked` and `commit: never`.
 
 ## Writing out
 
 - **Folder** (#37): the browser's folder picker, asking for write access. If the folder holds anything but `.git`, nothing is written, and the page says the folder must be empty or a fresh git repo. Cancelling the picker changes nothing. The app lists the folder's names only, and never opens its files.
 - **Zip:** the same files in `agent-memory.zip`, at its root, built in the adapter with `System.IO.Compression`. The browser only saves the bytes.
-- Either way the page moves to the next steps. **Back to setup** keeps every choice.
-
-## Next steps
-
-- If it was a zip: unzip it into a folder that stays put.
-- A field, "Where is the memory on this computer?" (#38). It fills the path into everything below as it's typed; empty, they show `<path to your memory>`. Nothing is remembered.
-- The git commands, each with a Copy button: `cd "<path>"`, `git init`, `git add -A`, `git commit -m "Start my agent memory"`.
-- For each agent ticked: its instructions file and the pointer line, with a Copy button. Claude Code: `~/.claude/CLAUDE.md`. Codex: `~/.codex/AGENTS.md`. Other: just the line. The line is the one in the memory's README: `Before starting any task, read <path>/Start here.md and follow it.`
+- Either way the page stays on setup, with every choice kept, and a toast says what to tell the agent: "Read Set up.md in this folder and follow it." For a zip, it says to unzip it first, into a folder that stays put. The toast shows the sentence on a line of its own, with a Copy button under it, and stays until it's dismissed (#45).
 
 ## Ports
 
@@ -155,9 +145,9 @@ public interface MemoryFiles
 }
 ```
 
-`FolderWrite` says written (with the folder's name, for the page), cancelled, or not empty.
+`FolderWrite` says written (with the folder's name, for the toast), cancelled, not empty, or failed.
 
-**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice, the agents, Obsidian, `CanPickFolder`, whether the page is on setup or the next steps, the memory's path, the pointers, and the problem to show. `UserTasks`: tick a role, move a stage up or down, tick a pack or a guideline, choose committing, tick an agent, tick Obsidian, write to a folder, download the zip, set the memory's path, go back to setup, dismiss the problem.
+**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice, `CanPickFolder`, what the last write did (and the folder's name), the setup note's name, and the problem to show. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, write to a folder, download the zip, dismiss the problem.
 
 The rules that make a memory from the choices and the content (front matter, tags, the workflow's order and warnings) are in `Motif.Memory.Domain`.
 
@@ -176,8 +166,8 @@ The Web App is the composition root (`Program.cs`), so it alone references the r
 
 Built on the Motif web kit, as Motif Glossary is: copy `scripts/sync-suite.sh` from it and follow the kit's README (`Motif.NET/brand/web`). The app bar has the `ToolSwitcher` (`Current="memory"`), the `ThemeMenu` and Help. Deploy with Glossary's `pages.yml` and `suite.yml`, changed to this solution. The tool stays `Ready: false` in the kit's `Tools.All` until launch (issue #1, step 6).
 
-- Sections as in the table above, top to bottom, each with a line saying what it's for. Orange only for the warnings and the primary button, as the kit's conventions say.
-- Workflow: a list with up and down buttons per stage. A role unticked above takes its stage out of the list; ticking it again puts it back where it was in the default order.
+- Sections as in the table above, top to bottom, each with a line saying what it's for. Each can be closed, and its heading says what's chosen in it (#48). Orange only for the warnings and the primary button, as the kit's conventions say.
+- Workflow: a list with up and down buttons per stage. A stage can also be dragged onto another to take its place (#46). The user's last stage is pinned: it shows "Always last" where the buttons would be (#47). A role unticked above takes its stage out of the list; ticking it again puts it back where it was in the default order.
 - Guidelines: each pack with its own tick and the number of guidelines ticked, opening to show the guidelines grouped by section.
 - Help: what Motif Memory makes, the three layers, and that nothing leaves the browser.
 
@@ -186,18 +176,17 @@ Built on the Motif web kit, as Motif Glossary is: copy `scripts/sync-suite.sh` f
 Through the User port, with the real Bundled Content where the real content is the point and Fake Memory Content for the format's own rules. The behaviours to cover:
 
 1. The defaults are as in the table above.
-2. With everything ticked, every file in `Content/` is written except the Obsidian ones, with no front matter and no tags left in any of them.
+2. With everything ticked, every file in `Content/` is written, with no front matter and no tags left in any of them.
 3. Core roles can't be unticked.
 4. Unticking a role leaves out its note, its start-note line, its stage (with the rest renumbered), the text tagged with it, and any temporary doc no role left writes.
 5. With only the core, there's no `Workflow/` folder, and nothing mentions it.
 6. No written memory has a broken link: everything ticked, only the core, and each role or optional pack left out on its own.
-7. Moving a stage reorders and renumbers the written steps. Moving a reader above the writer of its doc shows a warning beside it, and moving it back clears the warning.
+7. Moving a stage reorders and renumbers the written steps. A stage dropped on another takes its place. The user's last stage stays last, and nothing moves below it. Moving a reader above the writer of its doc shows a warning beside it, and moving it back clears the warning.
 8. An unticked guideline isn't written; a section with none left loses its heading; a pack left out loses its file and General's links to it.
 9. Each committing choice writes its own version of the Memory Editor's rule.
-10. Obsidian adds `.obsidian/app.json` and `.gitignore`.
-11. A folder that isn't empty gets a problem and no files; a cancelled picker changes nothing; a folder written or a zip downloaded moves to the next steps; going back keeps the choices.
-12. The pointers fill in the path as it's set, show the placeholder when it's empty, and appear only for the agents ticked.
-13. The content is valid: every tag is closed and its conditions known, every role note has front matter, and every doc named in front matter has its bullet in `Temporary Docs.md`.
+10. The setup note has the agent add the README's pointer line and delete the note, and its first commit follows the committing choice.
+11. A folder that isn't empty gets a problem and no files; a cancelled picker changes nothing, and doesn't report an earlier write; a folder written or a zip downloaded says so, and keeps the choices.
+12. The content is valid: every tag is closed and its conditions known, every role note has front matter, and every doc named in front matter has its bullet in `Temporary Docs.md`.
 
 ## Building it
 

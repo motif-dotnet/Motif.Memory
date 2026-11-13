@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md]
+reads: [BEHAVIOUR_CHECKLIST.md]
+---
+
 Job
 - Make the changes the user asks for in their own code review, and turn the general preferences behind them into agreed rules.
 

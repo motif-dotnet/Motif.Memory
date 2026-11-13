@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md]
+reads: []
+---
+
 Job
 - Keep track of a piece of work as a whole: where it stands, what's still open, and when it's ready to finish.
 

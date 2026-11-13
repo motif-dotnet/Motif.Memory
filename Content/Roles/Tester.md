@@ -1,3 +1,9 @@
+---
+core: false
+writes: [PROGRESS.md, MANUAL_TESTS.md]
+reads: []
+---
+
 Job
 - Run and exercise the code to confirm it works as described, and report what fails.
 

@@ -6,7 +6,7 @@ The format is described in the [Motif Glossary design note](https://github.com/m
 
 In prose, the names of specific things (roles, ports, actors, storage) take Title Case: the Memory Auditor, the Developer. Other terms stay lower case: lesson, temporary doc. Use italics only when writing about the word itself. A doc for people may link a term to its entry the first time it appears.
 
-Only the plan's stubs are built so far, so most terms are proposed, and none has an **In code** field yet.
+Version 1 is built, so the terms it uses have an **In code** field. Most are still proposed, until they're agreed.
 
 ## Catalogue
 
@@ -17,12 +17,22 @@ The page of Motif Memory where any single role or pack can be viewed or download
 - **Status:** proposed
 - **See also:** [Pack](#pack), [Role](#role)
 
+## Committing
+
+The setup choice of when the agent commits the memory's agreed changes: once agreed (the default), only when asked, or never, when the Developer commits. It changes only the Memory Editor's first rule.
+
+- **Kind:** domain concept
+- **In code:** `Committing`
+- **Status:** proposed
+- **See also:** [Memory Editor](#memory-editor), [Setup](#setup)
+
 ## Core
 
 The part of every memory that isn't a choice: the starting point, the Memory Editor and the Memory Auditor. On its own, with guidelines, it's a working memory.
 
 - **Kind:** domain concept
 - **Avoid:** base, minimum
+- **In code:** `Role.Core`
 - **Status:** proposed
 - **See also:** [Memory Auditor](#memory-auditor), [Memory Editor](#memory-editor), [Starting point](#starting-point)
 
@@ -32,6 +42,7 @@ A piece of advice on how to design or write the code, picked from packs at setup
 
 - **Kind:** domain concept
 - **Avoid:** coding standard, style rule
+- **In code:** `Guideline`, `GuidelineChoice`
 - **See also:** [Pack](#pack), [Setup](#setup)
 
 ## Developer
@@ -47,7 +58,7 @@ The memory's own text calls this person "the user", the agent's word for them. T
 
 ## Instructions file
 
-The file an agent reads at the start of every session, such as `CLAUDE.md` or `AGENTS.md`. With Motif Memory it holds only the pointer, which the Developer pastes in.
+The file an agent reads at the start of every session, such as `CLAUDE.md` or `AGENTS.md`. With Motif Memory it holds only the pointer, which the agent adds itself, through the setup note.
 
 - **Kind:** domain concept
 - **Avoid:** config, prompt
@@ -87,6 +98,7 @@ The driven port that reads the role and pack texts the memory is made from. Its 
 
 - **Kind:** port
 - **Avoid:** templates, resources
+- **In code:** `MemoryContent`; real adapter `BundledContentMemoryContent`
 - **Status:** proposed
 - **Sketch:** `4d3e0c03`
 - **See also:** [Catalogue](#catalogue), [Pack](#pack)
@@ -105,6 +117,7 @@ The core role that changes the memory when the user asks: roles, rules, guidelin
 The port that writes the starter memory's Markdown files out.
 
 - **Kind:** port
+- **In code:** `MemoryFiles`; real adapter `BrowserFilesMemoryFiles`
 - **Status:** proposed
 - **Sketch:** `4d3e0c02`
 - **See also:** [Memory Repo](#memory-repo)
@@ -125,16 +138,8 @@ This app: it sets up an agent's external memory, with the roles, workflow and de
 
 - **Kind:** system
 - **Avoid:** memory tool, Memory app
+- **In code:** `MotifMemoryApplication`
 - **Sketch:** `4d3e0a01`
-
-## Next steps
-
-What the page shows once the memory is written: making it a git repo, its first commit, and the pointer for each agent ticked, with the memory's path filled in. The browser can't run git, so the Developer does these.
-
-- **Kind:** domain concept
-- **Avoid:** summary, finish screen
-- **Status:** proposed
-- **See also:** [Pointer](#pointer), [Setup](#setup)
 
 ## Pack
 
@@ -142,12 +147,23 @@ A group of design guidelines picked together at setup, such as General or C#. Ea
 
 - **Kind:** domain concept
 - **Avoid:** bundle, preset, set
+- **In code:** `Pack`, `PackChoice`
 - **Status:** proposed
 - **See also:** [Design guideline](#design-guideline)
 
+## Pinned stage
+
+The user's stage that ends the workflow's default order, their last manual testing. It stays last whatever the Developer moves, because the work isn't finished until the user has tried it.
+
+- **Kind:** domain concept
+- **Avoid:** locked stage, fixed stage
+- **In code:** `Setup.IsPinned`, `StageChoice.Pinned`
+- **Status:** proposed
+- **See also:** [Stage](#stage), [Workflow](#workflow)
+
 ## Pointer
 
-The one thing the agent's instructions file holds: where the memory's starting point is. Motif Memory shows it at the end of setup, and the Developer pastes it in.
+The one thing the agent's instructions file holds: where the memory's starting point is. The agent adds it, through the setup note.
 
 - **Kind:** domain concept
 - **Avoid:** link, import, include
@@ -178,6 +194,7 @@ A part the agent plays, such as the Bug Fixer or the Memory Auditor. The Develop
 
 - **Kind:** domain concept
 - **Avoid:** persona, agent (the agent is what plays a role)
+- **In code:** `Role`, `RoleChoice`
 - **Status:** proposed
 - **See also:** [Core](#core), [Stage](#stage), [Workflow](#workflow)
 
@@ -187,6 +204,7 @@ What the app needs to know about a role that its text doesn't say plainly: wheth
 
 - **Kind:** domain concept
 - **Avoid:** metadata, manifest
+- **In code:** `FrontMatter`, read into `Role`
 - **Status:** proposed
 - **See also:** [Role](#role), [Temporary doc](#temporary-doc)
 
@@ -199,12 +217,23 @@ One agreed line in a memory note, such as one of a role's Rules or a design guid
 - **Status:** proposed
 - **See also:** [Design guideline](#design-guideline) (a kind of rule), [Lesson](#lesson)
 
+## Setup note
+
+The memory's one-off note, `Set up.md`, that the Developer points their agent at once the memory is written: the agent makes the memory a git repo, adds the pointer to its own instructions file, deletes the note, and makes the first commit if the committing choice allows. It finishes the setup the browser can't.
+
+- **Kind:** domain concept
+- **Avoid:** next steps, install script, bootstrap
+- **In code:** `Content.SetupNote`, `UserQueries.SetupNote`
+- **Status:** proposed
+- **See also:** [Pointer](#pointer), [Setup](#setup)
+
 ## Setup
 
 What the Developer does in Motif Memory: tick the roles, order the workflow stages, pick guideline packs and choose when memory changes are committed, then write the first version of the memory out.
 
 - **Kind:** domain concept
 - **Avoid:** wizard, configuration, install
+- **In code:** `Setup`, `Screen.Setup`
 - **Status:** proposed
 
 ## Stage
@@ -213,6 +242,7 @@ One step in the workflow, played by a role or by the user. Stages hand on to eac
 
 - **Kind:** domain concept
 - **Avoid:** phase, step
+- **In code:** `Stage`, `StageChoice`
 - **Status:** proposed
 - **See also:** [Temporary doc](#temporary-doc), [Workflow](#workflow)
 
@@ -222,6 +252,7 @@ The first file of the memory, `Start here.md`, the one the pointer names. It onl
 
 - **Kind:** domain concept
 - **Avoid:** index, root, home
+- **In code:** `Content.StartNote`
 - **Status:** proposed
 - **See also:** [Memory](#memory), [Pointer](#pointer)
 
@@ -231,6 +262,7 @@ A mark in `Content/`, written as an HTML comment, around text that's written onl
 
 - **Kind:** domain concept
 - **Avoid:** marker, directive, placeholder
+- **In code:** `Tags`
 - **Status:** proposed
 - **See also:** [Memory Content](#memory-content), [Setup](#setup)
 
@@ -240,6 +272,7 @@ A working note for one piece of work, such as the progress doc or the bug list, 
 
 - **Kind:** domain concept
 - **Avoid:** change doc, handoff, ticket, scratch file
+- **In code:** `TemporaryDoc`
 - **Status:** proposed
 - **See also:** [Stage](#stage), [Workflow](#workflow)
 
@@ -249,6 +282,7 @@ The driving port people use. Its real adapter is the Web App: the setup page and
 
 - **Kind:** port
 - **Avoid:** user, for a person (say Developer)
+- **In code:** `UserTasks`, `UserQueries`
 - **Status:** proposed
 - **Sketch:** `4d3e0c01`
 
@@ -258,5 +292,6 @@ The ideal order of stages for a piece of work, on a branch or straight on the ma
 
 - **Kind:** domain concept
 - **Avoid:** process, pipeline
+- **In code:** `Content.WorkflowNote`, `Role.InWorkflow`
 - **Status:** proposed
 - **See also:** [Role](#role), [Stage](#stage)

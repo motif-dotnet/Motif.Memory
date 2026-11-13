@@ -1,3 +1,8 @@
+---
+pack: C#
+optional: true
+---
+
 Rules for C# code, on top of the [General guidelines](General.md), which come first.
 
 ### Prefer X over Y
