@@ -18,7 +18,7 @@ They're deleted, so anything a future reader of the code needs, such as why a bu
 
 - Progress (`PROGRESS.md`): what's been done, what's next, open questions for the user and their answers once decided, and the commit the work started from. Each role adds its own finished part; the Coordinator keeps the whole picture current.
 <!-- if BEHAVIOUR_CHECKLIST.md -->
-- Behaviour checklist (`BEHAVIOUR_CHECKLIST.md`): what the user was happy with after their first round of testing, as numbered points from the user's point of view. The numbers run on across sections, so each item can be pointed to. It must keep working through tidying, refactoring and bug fixing, unless the user redefines it.
+- Behaviour checklist (`BEHAVIOUR_CHECKLIST.md`): how the work should behave, as numbered points from the user's point of view: what the user was happy with after their first round of testing, or what they want, when it's written first. The numbers run on across sections, so each item can be pointed to. It must keep working through tidying, refactoring and bug fixing, unless the user redefines it.
 <!-- end -->
 <!-- if CODE_REVIEW.md -->
 - Code review (`CODE_REVIEW.md`): the findings, most severe first, then a "Checked and OK" section.
