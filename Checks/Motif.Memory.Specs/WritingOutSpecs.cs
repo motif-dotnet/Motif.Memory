@@ -8,9 +8,62 @@ namespace Motif.Memory.Specs;
 public class WritingOutSpecs
 {
     [Fact]
+    public async Task A_folder_picked_is_named_before_anything_is_written()
+    {
+        var f = new Fixture();
+
+        await f.Tasks.PickFolder();
+
+        f.Queries.PickedFolder.Should().Be("memory");
+        f.Queries.Problem.Should().BeEmpty();
+        f.Files.Written.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task A_folder_that_isnt_empty_is_refused_as_soon_as_its_picked()
+    {
+        var f = new Fixture();
+        f.Files.Picks = FakeMemoryFiles.Picking.NotEmpty;
+
+        await f.Tasks.PickFolder();
+
+        f.Queries.PickedFolder.Should().BeEmpty();
+        f.Queries.Problem.Should().Contain("“memory” isn't empty").And.Contain("nothing in it but .git");
+
+        f.Tasks.DismissProblem();
+        f.Queries.Problem.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task A_cancelled_picker_keeps_the_folder_already_picked()
+    {
+        var f = new Fixture();
+        await f.Tasks.PickFolder();
+        f.Files.Picks = FakeMemoryFiles.Picking.Cancel;
+
+        await f.Tasks.PickFolder();
+
+        f.Queries.PickedFolder.Should().Be("memory");
+        f.Queries.Problem.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task A_folder_that_cant_be_picked_gets_a_problem()
+    {
+        var f = new Fixture();
+        f.Files.Picks = FakeMemoryFiles.Picking.Fail;
+
+        await f.Tasks.PickFolder();
+
+        f.Queries.PickedFolder.Should().BeEmpty();
+        f.Queries.Problem.Should().Contain("can't be opened").And.Contain("download the zip");
+    }
+
+    [Fact]
     public async Task A_folder_written_says_so_and_where()
     {
         var f = new Fixture();
+        await f.Tasks.PickFolder();
 
         await f.Tasks.WriteToFolder();
 
@@ -21,56 +74,67 @@ public class WritingOutSpecs
     }
 
     [Fact]
-    public async Task A_folder_that_isnt_empty_gets_a_problem_and_no_files()
+    public async Task A_folder_written_to_must_be_picked_again_to_write_again()
     {
         var f = new Fixture();
-        f.Files.Picks = FakeMemoryFiles.Picking.NotEmpty;
+        await f.Tasks.PickFolder();
+
+        await f.Tasks.WriteToFolder();
+
+        f.Queries.PickedFolder.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Nothing_is_written_before_a_folder_is_picked()
+    {
+        var f = new Fixture();
+
+        await f.Tasks.WriteToFolder();
+
+        f.Queries.Written.Should().Be(Written.Not);
+        f.Queries.Problem.Should().Contain("Pick a folder");
+        f.Files.Written.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task A_folder_filled_after_its_picked_gets_a_problem_and_no_files()
+    {
+        var f = new Fixture();
+        await f.Tasks.PickFolder();
+        f.Files.Writes = FakeMemoryFiles.Writing.NotEmpty;
 
         await f.Tasks.WriteToFolder();
 
         f.Queries.Written.Should().Be(Written.Not);
         f.Queries.Problem.Should().Contain("“memory” isn't empty").And.Contain("nothing in it but .git").And.Contain("nothing was written");
         f.Files.Written.Should().BeEmpty();
-
-        f.Tasks.DismissProblem();
-        f.Queries.Problem.Should().BeEmpty();
-    }
-
-    [Fact]
-    public async Task A_cancelled_picker_changes_nothing()
-    {
-        var f = new Fixture();
-        f.Files.Picks = FakeMemoryFiles.Picking.Cancel;
-
-        await f.Tasks.WriteToFolder();
-
-        f.Queries.Written.Should().Be(Written.Not);
-        f.Queries.Problem.Should().BeEmpty();
-        f.Files.Written.Should().BeEmpty();
-    }
-
-    [Fact]
-    public async Task A_cancel_after_a_write_doesnt_report_the_earlier_write()
-    {
-        var f = new Fixture();
-        await f.Tasks.WriteToFolder();
-        f.Files.Picks = FakeMemoryFiles.Picking.Cancel;
-
-        await f.Tasks.WriteToFolder();
-
-        f.Queries.Written.Should().Be(Written.Not);
     }
 
     [Fact]
     public async Task A_folder_that_cant_be_written_gets_a_problem()
     {
         var f = new Fixture();
-        f.Files.Picks = FakeMemoryFiles.Picking.Fail;
+        await f.Tasks.PickFolder();
+        f.Files.Writes = FakeMemoryFiles.Writing.Fail;
 
         await f.Tasks.WriteToFolder();
 
         f.Queries.Written.Should().Be(Written.Not);
         f.Queries.Problem.Should().Contain("can't be written to").And.Contain("download the zip");
+    }
+
+    [Fact]
+    public async Task A_failed_write_after_a_write_doesnt_report_the_earlier_write()
+    {
+        var f = new Fixture();
+        await f.Tasks.PickFolder();
+        await f.Tasks.WriteToFolder();
+        await f.Tasks.PickFolder();
+        f.Files.Writes = FakeMemoryFiles.Writing.Fail;
+
+        await f.Tasks.WriteToFolder();
+
+        f.Queries.Written.Should().Be(Written.Not);
     }
 
     [Fact]

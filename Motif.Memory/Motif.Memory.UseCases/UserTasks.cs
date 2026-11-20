@@ -28,6 +28,14 @@ public interface UserTasks
 
     void ChooseCommitting(Committing committing);
 
+    /// <summary>
+    /// A folder that isn't empty is refused straight away, before the memory is written.
+    /// </summary>
+    Task PickFolder();
+
+    /// <summary>
+    /// Writes to the folder picked, which must then be picked again to write again.
+    /// </summary>
     Task WriteToFolder();
 
     Task DownloadZip();

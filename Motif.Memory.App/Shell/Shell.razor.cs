@@ -35,27 +35,37 @@ public partial class Shell : IDisposable
 
     private static string Plural(int count, string one, string many) => $"{count} {(count == 1 ? one : many)}";
 
+    private async Task PickFolder() => await Run(App.PickFolder, "The folder wasn't picked");
+
     private async Task WriteToFolder() => await Writing(App.WriteToFolder);
 
     private async Task DownloadZip() => await Writing(App.DownloadZip);
 
-    private async Task Writing(Func<Task> write)
+    /// <summary>
+    /// Runs a command that may go wrong.
+    /// What went wrong is its outcome, so it's a toast, as in every Motif tool.
+    /// </summary>
+    private async Task Run(Func<Task> command, string failure)
     {
         busy = true;
         try
         {
-            await write();
+            await command();
         }
         finally
         {
             busy = false;
         }
-        // What went wrong is the outcome of a command, so it's a toast, as in every Motif tool.
         if (App.Problem != "")
         {
-            Toaster.Problem("The memory wasn't written", [App.Problem]);
+            Toaster.Problem(failure, [App.Problem]);
             App.DismissProblem();
         }
+    }
+
+    private async Task Writing(Func<Task> write)
+    {
+        await Run(write, "The memory wasn't written");
         // The last steps are the agent's, through the setup note, so the outcome says how to start them.
         // That's a sentence to pass on, so the toast offers it to copy and stays until dismissed.
         var tell = $"Read {App.SetupNote} in this folder and follow it.";

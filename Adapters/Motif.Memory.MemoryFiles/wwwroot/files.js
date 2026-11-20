@@ -4,23 +4,45 @@ export function canPickFolder() {
   return typeof window.showDirectoryPicker === "function";
 }
 
-// Writes each [path, text] into a folder the Developer picks, if it holds nothing but .git.
+// The folder the memory will be written to, kept from picking it until it's written to once.
+let picked;
+
+// Shows the folder picker, and keeps the folder if it holds nothing but .git.
 // Only the folder's names are listed: no file in it is opened.
-export async function writeToFolder(files) {
+export async function pickFolder() {
   let folder;
   try {
     folder = await window.showDirectoryPicker({ id: "motif-memory", mode: "readwrite" });
   } catch (e) {
-    // Only closing the picker is a cancel. A folder picked but refused write access must say so.
+    // Only closing the picker is a cancel, and keeps the folder picked before.
+    // A folder picked but refused write access must say so.
     if (e?.name === "AbortError") return { outcome: "cancelled", name: "", reason: "" };
+    picked = undefined;
     console.error("Motif Memory: the folder picker failed", e);
     if (e?.name === "NotAllowedError") return { outcome: "failed", name: "", reason: "The browser didn't allow editing files in that folder." };
     return { outcome: "failed", name: "", reason: message(e) };
   }
 
+  picked = undefined;
+  if (!(await isEmpty(folder))) return { outcome: "notEmpty", name: folder.name, reason: "" };
+  picked = folder;
+  return { outcome: "picked", name: folder.name, reason: "" };
+}
+
+async function isEmpty(folder) {
   for await (const name of folder.keys()) {
-    if (name !== ".git") return { outcome: "notEmpty", name: folder.name, reason: "" };
+    if (name !== ".git") return false;
   }
+  return true;
+}
+
+// Writes each [path, text] into the folder picked, if it still holds nothing but .git.
+export async function writeToFolder(files) {
+  const folder = picked;
+  picked = undefined;
+  if (!folder) return { outcome: "failed", name: "", reason: "No folder is picked." };
+  // It may have filled since it was picked.
+  if (!(await isEmpty(folder))) return { outcome: "notEmpty", name: folder.name, reason: "" };
 
   let path = "";
   try {

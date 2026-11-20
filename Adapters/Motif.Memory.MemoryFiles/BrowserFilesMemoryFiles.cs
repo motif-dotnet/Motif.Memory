@@ -5,7 +5,8 @@ using Microsoft.JSInterop;
 namespace Motif.Memory.Adapters;
 
 /// <summary>
-/// Writes the memory into a folder through the browser's folder picker, or saves it as a zip (wwwroot/files.js).
+/// Writes the memory into a folder picked through the browser's folder picker, or saves it as a zip
+/// (wwwroot/files.js).
 /// Call <see cref="Start"/> once at startup, so <see cref="CanPickFolder"/> is known before the page shows.
 /// </summary>
 public sealed class BrowserFilesMemoryFiles(IJSRuntime js) : MemoryFiles, IAsyncDisposable
@@ -17,6 +18,19 @@ public sealed class BrowserFilesMemoryFiles(IJSRuntime js) : MemoryFiles, IAsync
 
     public async Task Start() => CanPickFolder = await (await module.Value).InvokeAsync<bool>("canPickFolder");
 
+    public async Task<FolderPick> PickFolder()
+    {
+        var result = await (await module.Value).InvokeAsync<Result>("pickFolder");
+        return result.Outcome switch
+        {
+            "picked" => new FolderPick.Picked(result.Name),
+            "notEmpty" => new FolderPick.NotEmpty(result.Name),
+            "failed" => new FolderPick.Failed(result.Reason),
+            "cancelled" => new FolderPick.Cancelled(),
+            _ => new FolderPick.Failed(Unknown(result)),
+        };
+    }
+
     public async Task<FolderWrite> WriteToFolder(IReadOnlyList<MemoryFile> files)
     {
         // As an object, the list is one argument. As an array, each file in it would be an argument of its own.
@@ -27,10 +41,12 @@ public sealed class BrowserFilesMemoryFiles(IJSRuntime js) : MemoryFiles, IAsync
             "written" => new FolderWrite.Written(result.Name),
             "notEmpty" => new FolderWrite.NotEmpty(result.Name),
             "failed" => new FolderWrite.Failed(result.Reason),
-            "cancelled" => new FolderWrite.Cancelled(),
-            _ => new FolderWrite.Failed($"The browser gave an answer Motif Memory doesn't know: \"{result.Outcome}\"."),
+            _ => new FolderWrite.Failed(Unknown(result)),
         };
     }
+
+    private static string Unknown(Result result) =>
+        $"The browser gave an answer Motif Memory doesn't know: \"{result.Outcome}\".";
 
     private sealed record Result(string Outcome, string Name, string Reason);
 

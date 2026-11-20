@@ -71,6 +71,8 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
 
     public bool CanPickFolder => files.CanPickFolder;
 
+    public string PickedFolder { get; private set; } = "";
+
     public Written Written { get; private set; } = Written.Not;
 
     public string FolderName { get; private set; } = "";
@@ -93,18 +95,47 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
 
     public void ChooseCommitting(Committing committing) => setup.Committing = committing;
 
+    public async Task PickFolder()
+    {
+        Problem = "";
+        switch (await files.PickFolder())
+        {
+            case FolderPick.Picked picked:
+                PickedFolder = picked.FolderName;
+                break;
+            case FolderPick.NotEmpty notEmpty:
+                PickedFolder = "";
+                Problem = $"“{notEmpty.FolderName}” isn't empty, so it can't hold the memory. {PickAnEmptyFolder}";
+                break;
+            case FolderPick.Failed failed:
+                PickedFolder = "";
+                Problem = $"The folder can't be opened. {failed.Reason} Try another folder, or download the zip.";
+                break;
+        }
+    }
+
+    private const string PickAnEmptyFolder = "Pick an empty folder, or a fresh git repo with nothing in it but .git.";
+
     public async Task WriteToFolder()
     {
         Problem = "";
         Written = Written.Not;
-        switch (await files.WriteToFolder(setup.Write()))
+        if (PickedFolder == "")
+        {
+            Problem = "Pick a folder to write the memory to first.";
+            return;
+        }
+        var write = await files.WriteToFolder(setup.Write());
+        // Whatever happened, the folder now has files in it, or may have.
+        PickedFolder = "";
+        switch (write)
         {
             case FolderWrite.Written written:
                 FolderName = written.FolderName;
                 Written = Written.ToFolder;
                 break;
             case FolderWrite.NotEmpty notEmpty:
-                Problem = $"“{notEmpty.FolderName}” isn't empty, so nothing was written. Pick an empty folder, or a fresh git repo with nothing in it but .git.";
+                Problem = $"“{notEmpty.FolderName}” isn't empty any more, so nothing was written. {PickAnEmptyFolder}";
                 break;
             case FolderWrite.Failed failed:
                 Problem = $"Writing to the folder failed. {failed.Reason} Try another folder, or download the zip.";

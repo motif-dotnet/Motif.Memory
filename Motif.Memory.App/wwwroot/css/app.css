@@ -56,9 +56,11 @@
 .pack summary .tick { padding: 3px 6px; }
 .pack[open] { padding-bottom: 10px; }
 
-/* Writing out */
-.write { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding-top: 20px; border-top: 1px solid var(--line); }
-.write button { display: inline-flex; align-items: center; gap: 6px; }
+/* The folder, and writing out */
+.folder, .write { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+.folder button, .folder .picked, .write button { display: inline-flex; align-items: center; gap: 6px; }
+.folder .picked { overflow-wrap: anywhere; }
+.write { padding-top: 20px; border-top: 1px solid var(--line); }
 
 .after { margin: 10px 0 0; }
 

@@ -21,6 +21,25 @@
                 <h1>Set up your agent's memory</h1>
                 <p class="lead">Choose the roles, workflow and design guidelines that suit your way of working. Every choice has a default, so you can write the memory straight away and tailor it later.</p>
 
+                @if (App.CanPickFolder)
+                {
+                    <details class="choice" open>
+                        <summary><h2>Folder</h2><span class="count">@(App.PickedFolder == "" ? "not picked" : App.PickedFolder)</span></summary>
+                        <p class="what">Where your memory will live. It must be empty, or a fresh git repo with nothing in it but <code>.git</code>, and it becomes a git repo of its own.</p>
+                        <div class="folder">
+                            @if (App.PickedFolder == "")
+                            {
+                                <button class="ghost strong" disabled="@busy" @onclick="PickFolder">@Icons.Folder Pick a folder…</button>
+                            }
+                            else
+                            {
+                                <span class="picked">@Icons.Folder <b>@App.PickedFolder</b></span>
+                                <button class="ghost small" disabled="@busy" @onclick="PickFolder">Change…</button>
+                            }
+                        </div>
+                    </details>
+                }
+
                 <details class="choice" open>
                     <summary><h2>Roles</h2><span class="count">@App.Roles.Count(r => r.Ticked) of @App.Roles.Count</span></summary>
                     <p class="what">The parts the agent can play. Each brings its stage in the workflow and the temporary docs it writes.</p>
@@ -135,9 +154,17 @@
                 <div class="write">
                     @if (App.CanPickFolder)
                     {
-                        <button class="primary" disabled="@busy" @onclick="WriteToFolder">@Icons.Folder Write to a folder…</button>
-                        <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
-                        <span class="muted">The folder must be empty, or a fresh git repo with nothing in it but <code>.git</code>.</span>
+                        @if (App.PickedFolder == "")
+                        {
+                            <button class="primary" disabled>@Icons.Folder Write to a folder</button>
+                            <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
+                            <span class="muted">Pick the folder at the top first, or download the memory as a zip.</span>
+                        }
+                        else
+                        {
+                            <button class="primary" disabled="@busy" @onclick="WriteToFolder">@Icons.Folder Write to “@App.PickedFolder”</button>
+                            <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
+                        }
                     }
                     else
                     {

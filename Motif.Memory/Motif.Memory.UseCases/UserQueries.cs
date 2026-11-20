@@ -19,6 +19,11 @@ public interface UserQueries
     bool CanPickFolder { get; }
 
     /// <summary>
+    /// The name of the folder the memory will be written to, or empty when none is picked.
+    /// </summary>
+    string PickedFolder { get; }
+
+    /// <summary>
     /// What the last write command did: written to a folder, downloaded as a zip, or nothing.
     /// </summary>
     Written Written { get; }
