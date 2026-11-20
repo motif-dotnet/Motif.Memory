@@ -4,18 +4,19 @@ How the first version is built. The why is in [decisions.md](decisions.md) (#33 
 
 ## What it does
 
-One page. The Developer makes the setup choices, every one with a default already chosen, then writes the memory to a folder or downloads it as a zip. A toast then says what to tell their agent, which finishes the setup through the setup note (#42). There's no catalogue yet (#33), and the app never reads an existing memory (#28).
+One page. The Developer picks the folder the memory will live in, where the browser can, makes the setup choices, every one with a default already chosen, then writes the memory to that folder or downloads it as a zip (#49). A toast then says what to tell their agent, which finishes the setup through the setup note (#42). There's no catalogue yet (#33), and the app never reads an existing memory (#28).
 
 The choices, in the page's order:
 
 | Section | Choice | Default |
 |---|---|---|
+| Folder | Where the memory will live: shown only where the browser has a folder picker (#49) | None picked |
 | Roles | Tick each non-core role. The core roles (Memory Editor, Memory Auditor) are shown ticked and can't be unticked | All ticked |
 | Workflow | Move each stage up or down, the user's stages among them. A warning shows beside a stage that reads a temporary doc no earlier stage writes | Workflow.md's order |
 | Guidelines | Untick single guidelines in any pack; leave out whole packs other than General (#36) | Everything ticked |
 | Committing | When the memory's changes are committed: once agreed, only when asked, or never (the Developer commits) (#23) | Once agreed |
 
-Then **Write to a folder…** (where the browser has a folder picker) and **Download zip** (always).
+Then **Write to “*folder*”** (where the browser has a folder picker, naming the folder picked) and **Download zip** (always).
 
 ## Content format
 
@@ -108,7 +109,7 @@ New file: `Content/Set up.md`, the setup note (#42), with its commit step tagged
 
 ## Writing out
 
-- **Folder** (#37): the browser's folder picker, asking for write access. If the folder holds anything but `.git`, nothing is written, and the page says the folder must be empty or a fresh git repo. Cancelling the picker changes nothing. The app lists the folder's names only, and never opens its files.
+- **Folder** (#37, #49): picked first, through the browser's folder picker, asking for write access. A folder that holds anything but `.git` is refused as soon as it's picked, and the page says it must be empty or a fresh git repo. Writing checks again, in case it has filled since, and writes nothing if so. Each folder picked is written to once, so writing again means picking again. Cancelling the picker keeps the folder picked before. The app lists the folder's names only, and never opens its files.
 - **Zip:** the same files in `agent-memory.zip`, at its root, built in the adapter with `System.IO.Compression`. The browser only saves the bytes.
 - Either way the page stays on setup, with every choice kept, and a toast says what to tell the agent: "Read Set up.md in this folder and follow it." For a zip, it says to unzip it first, into a folder that stays put. The toast shows the sentence on a line of its own, with a Copy button under it, and stays until it's dismissed (#45).
 
@@ -137,7 +138,13 @@ public interface MemoryFiles
     bool CanPickFolder { get; }
 
     /// <summary>
-    /// Shows the folder picker, then writes the files if the folder is empty or holds only .git.
+    /// Shows the folder picker, and keeps the folder if it's empty or holds only .git.
+    /// </summary>
+    Task<FolderPick> PickFolder();
+
+    /// <summary>
+    /// Writes the files into the folder picked, if it still holds nothing but .git.
+    /// Each folder picked is written to once: it must be picked again to write again.
     /// </summary>
     Task<FolderWrite> WriteToFolder(IReadOnlyList<MemoryFile> files);
 
@@ -145,9 +152,9 @@ public interface MemoryFiles
 }
 ```
 
-`FolderWrite` says written (with the folder's name, for the toast), cancelled, not empty, or failed.
+`FolderPick` says picked (with the folder's name), cancelled, not empty, or failed. `FolderWrite` says written (with the folder's name, for the toast), not empty, or failed.
 
-**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice, `CanPickFolder`, what the last write did (and the folder's name), the setup note's name, and the problem to show. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, write to a folder, download the zip, dismiss the problem.
+**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice, `CanPickFolder`, the folder picked, what the last write did (and the folder's name), the setup note's name, and the problem to show. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, pick a folder, write to it, download the zip, dismiss the problem.
 
 The rules that make a memory from the choices and the content (front matter, tags, the workflow's order and warnings) are in `Motif.Memory.Domain`.
 
@@ -157,7 +164,7 @@ The rules that make a memory from the choices and the content (front matter, tag
 |---|---|---|
 | Bundled Content | `Motif.Memory.MemoryContent` | Embeds `../../Content/**` as resources, dot-files too, with each file's path kept as its logical name (#40) |
 | Browser Files | `Motif.Memory.MemoryFiles` | A JS module (`wwwroot/files.js`) for `showDirectoryPicker` and saving the zip's bytes; the zip is made in C# |
-| Fake Memory Files | `Motif.Memory.Fakes` | Records what was written, and can be set to cancel, find the folder not empty, or have no folder picker |
+| Fake Memory Files | `Motif.Memory.Fakes` | Records what was written. Picking can be set to cancel, find the folder not empty or fail, writing to find it filled since or fail, and it can have no folder picker |
 | Fake Memory Content | `Motif.Memory.Fakes` | Content a spec makes up, for format rules the real content doesn't use |
 
 The Web App is the composition root (`Program.cs`), so it alone references the real adapters, as Motif Glossary's does. That's one reference more than the plan's §3, which covers the stubs.
@@ -185,7 +192,7 @@ Through the User port, with the real Bundled Content where the real content is t
 8. An unticked guideline isn't written; a section with none left loses its heading; a pack left out loses its file and General's links to it.
 9. Each committing choice writes its own version of the Memory Editor's rule.
 10. The setup note has the agent add the README's pointer line and delete the note, and its first commit follows the committing choice.
-11. A folder that isn't empty gets a problem and no files; a cancelled picker changes nothing, and doesn't report an earlier write; a folder written or a zip downloaded says so, and keeps the choices.
+11. A folder that isn't empty is refused when it's picked, with a problem; a cancelled picker keeps the folder picked before; nothing is written before a folder is picked, or to one that has filled since; a folder written must be picked again; a failed write doesn't report an earlier one; a folder written or a zip downloaded says so, and keeps the choices.
 12. The content is valid: every tag is closed and its conditions known, every role note has front matter, and every doc named in front matter has its bullet in `Temporary Docs.md`.
 
 ## Building it

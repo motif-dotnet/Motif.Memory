@@ -229,7 +229,7 @@ The memory's one-off note, `Set up.md`, that the Developer points their agent at
 
 ## Setup
 
-What the Developer does in Motif Memory: tick the roles, order the workflow stages, pick guideline packs and choose when memory changes are committed, then write the first version of the memory out.
+What the Developer does in Motif Memory: pick the folder the memory will live in, where the browser can, tick the roles, order the workflow stages, pick guideline packs and choose when memory changes are committed, then write the first version of the memory out.
 
 - **Kind:** domain concept
 - **Avoid:** wizard, configuration, install
