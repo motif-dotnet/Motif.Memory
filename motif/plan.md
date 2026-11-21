@@ -34,7 +34,7 @@ Motif.Memory.sln
 | `Motif.Memory.Domain` | `Motif.Memory/Motif.Memory.Domain/` | `classlib` | `Motif.Memory` | Domain-specific business rules |
 | `Motif.Memory.UseCases` | `Motif.Memory/Motif.Memory.UseCases/` | `classlib` | `Motif.Memory` | Application rules (use cases) and all port interfaces |
 | `Motif.Memory.ForSavingTheMemory` | `Adapters/Motif.Memory.ForSavingTheMemory/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the For saving the memory port |
-| `Motif.Memory.ForReadingTheContent` | `Adapters/Motif.Memory.ForReadingTheContent/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the For reading the content port |
+| `Motif.Memory.ForReadingTheContent` | `Adapters/Motif.Memory.ForReadingTheContent/` | `classlib` | `Motif.Memory.Adapters` | Adapters on the For reading the content port |
 | `Motif.Memory.Fakes` | `Checks/Motif.Memory.Fakes/` | `classlib` | `Motif.Memory.Fakes` | Fake driven adapters, for specs |
 | `Motif.Memory.Specs` | `Checks/Motif.Memory.Specs/` | `xunit` | `Motif.Memory.Specs` | Specs: the checks on every driving port |
 
@@ -209,7 +209,7 @@ Adapter notes:
 - `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake Fitting, and every fake of a port whose adapters are their own Fittings, with a folder per port (`ForReadingTheContent/`, `ForSavingTheMemory/`). The namespace is flat: `Motif.Memory.Fakes`.
 - `Motif.Memory.Specs` (`Checks/Motif.Memory.Specs/`): xUnit. Packages: `Microsoft.NET.Test.Sdk`, `xunit`, `xunit.runner.visualstudio`, `coverlet.collector`, `AwesomeAssertions`. Keep the template's packages and add `AwesomeAssertions`.
   Add one placeholder spec class with a single passing `[Fact]`, so `dotnet test` runs. Specs wire the real adapters over their fake Fittings, and the other fakes, up by hand; there is no composition root yet.
-- The browser adapters (`Motif.Memory.ForSavingTheMemory`, `Motif.Memory.ForReadingTheContent`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
+- The browser adapters (`Motif.Memory.ForSavingTheMemory`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
 - Use the latest stable package versions. Use AwesomeAssertions (`.Should()` style) in specs.
 
 ## 8. Not placed
