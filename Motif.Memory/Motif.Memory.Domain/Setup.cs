@@ -3,28 +3,8 @@ using System.Text.RegularExpressions;
 namespace Motif.Memory;
 
 /// <summary>
-/// When the memory's own changes are committed.
-/// </summary>
-public enum Committing
-{
-    /// <summary>
-    /// Once the user has agreed them: one commit per set of edits.
-    /// </summary>
-    Agreed,
-
-    /// <summary>
-    /// Only when the user asks.
-    /// </summary>
-    Asked,
-
-    /// <summary>
-    /// Never: the Developer commits.
-    /// </summary>
-    Never,
-}
-
-/// <summary>
-/// The Developer's choices, every one with its default, and the memory they make from the content.
+/// The Developer's choices, every one with its default, and the memory they
+/// make from the content.
 /// </summary>
 public sealed partial class Setup
 {
@@ -43,16 +23,21 @@ public sealed partial class Setup
 
     public Committing Committing { get; set; } = Committing.Agreed;
 
-    public bool IsTicked(Role role) => role.Core || !untickedRoles.Contains(role.Name);
+    public bool IsTicked(Role role) =>
+        role.Core || !untickedRoles.Contains(role.Name);
 
-    private bool IsTicked(string roleName) => Content.Roles.FirstOrDefault(r => r.Name == roleName) is { } role && IsTicked(role);
+    private bool IsTicked(string roleName) =>
+        Content.Roles.FirstOrDefault(r => r.Name == roleName) is { } role
+        && IsTicked(role);
 
     /// <summary>
-    /// Core roles can't be unticked. A role ticked again gets its stage back where it was in the default order.
+    /// Core roles can't be unticked. A role ticked again gets its stage back
+    /// where it was in the default order.
     /// </summary>
     public void TickRole(string name, bool ticked)
     {
-        if (Content.Roles.FirstOrDefault(r => r.Name == name) is not { Core: false } role || IsTicked(role) == ticked) return;
+        var role = Content.Roles.FirstOrDefault(r => r.Name == name);
+        if (role is not { Core: false } || IsTicked(role) == ticked) return;
         if (!ticked)
         {
             untickedRoles.Add(name);
@@ -70,14 +55,17 @@ public sealed partial class Setup
     private Stage Stage(int id) => Content.Stages.First(s => s.Id == id);
 
     /// <summary>
-    /// The stages of the roles ticked, and the user's, in the Developer's order.
+    /// The stages of the roles ticked, and the user's, in the Developer's
+    /// order.
     /// </summary>
     public IReadOnlyList<Stage> Stages => order.Select(Stage).ToList();
 
     /// <summary>
-    /// The user's stage that ends the default order stays last: the work isn't finished until they've tried it.
+    /// The user's stage that ends the default order stays last: the work
+    /// isn't finished until they've tried it.
     /// </summary>
-    public bool IsPinned(Stage stage) => stage.IsUsers && stage.Id == Content.Stages[^1].Id;
+    public bool IsPinned(Stage stage) =>
+        stage.IsUsers && stage.Id == Content.Stages[^1].Id;
 
     public void MoveStage(int id, int by)
     {
@@ -91,7 +79,8 @@ public sealed partial class Setup
 
     public void MoveStageTo(int id, int onto)
     {
-        if (order.Contains(id) && order.Contains(onto)) MoveStage(id, order.IndexOf(onto) - order.IndexOf(id));
+        if (order.Contains(id) && order.Contains(onto))
+            MoveStage(id, order.IndexOf(onto) - order.IndexOf(id));
     }
 
     /// <summary>
@@ -100,7 +89,11 @@ public sealed partial class Setup
     public IReadOnlyList<TemporaryDoc> Unwritten(Stage stage)
     {
         if (stage.IsUsers) return [];
-        var earlier = Stages.TakeWhile(s => s.Id != stage.Id).Where(s => !s.IsUsers).Select(s => Role(s.Role)).ToList();
+        var earlier = Stages
+            .TakeWhile(s => s.Id != stage.Id)
+            .Where(s => !s.IsUsers)
+            .Select(s => Role(s.Role))
+            .ToList();
         return Role(stage.Role).Reads
             .Where(doc => !earlier.Any(r => r.Writes.Contains(doc)))
             .Select(Content.Doc)
@@ -109,19 +102,22 @@ public sealed partial class Setup
 
     private Role Role(string name) => Content.Roles.First(r => r.Name == name);
 
-    public bool IsTicked(Pack pack) => !pack.Optional || !leftOutPacks.Contains(pack.Name);
+    public bool IsTicked(Pack pack) =>
+        !pack.Optional || !leftOutPacks.Contains(pack.Name);
 
     /// <summary>
     /// Only optional packs can be left out.
     /// </summary>
     public void TickPack(string name, bool ticked)
     {
-        if (Content.Packs.FirstOrDefault(p => p.Name == name) is not { Optional: true }) return;
+        var pack = Content.Packs.FirstOrDefault(p => p.Name == name);
+        if (pack is not { Optional: true }) return;
         if (ticked) leftOutPacks.Remove(name);
         else leftOutPacks.Add(name);
     }
 
-    public bool IsTicked(Guideline guideline) => !untickedGuidelines.Contains(guideline.Id);
+    public bool IsTicked(Guideline guideline) =>
+        !untickedGuidelines.Contains(guideline.Id);
 
     public void TickGuideline(string id, bool ticked)
     {
@@ -130,14 +126,18 @@ public sealed partial class Setup
     }
 
     /// <summary>
-    /// A pack is written if it's always written, or it's ticked with at least one guideline ticked.
+    /// A pack is written if it's always written, or it's ticked with at least
+    /// one guideline ticked.
     /// </summary>
-    public bool IsWritten(Pack pack) => !pack.Optional || (IsTicked(pack) && pack.Guidelines.Any(IsTicked));
+    public bool IsWritten(Pack pack) =>
+        !pack.Optional || (IsTicked(pack) && pack.Guidelines.Any(IsTicked));
 
-    public bool HasWorkflow => Content.Roles.Any(r => r.InWorkflow && IsTicked(r));
+    public bool HasWorkflow =>
+        Content.Roles.Any(r => r.InWorkflow && IsTicked(r));
 
     /// <summary>
-    /// Whether a tag's condition, or a note's <c>when:</c>, holds for these choices.
+    /// Whether a tag's condition, or a note's <c>when:</c>, holds for these
+    /// choices.
     /// </summary>
     public bool Holds(string condition) => condition switch
     {
@@ -147,42 +147,54 @@ public sealed partial class Setup
         "commit: never" => Committing == Committing.Never,
         _ when Content.Docs.Any(d => d.FileName == condition) =>
             Content.Roles.Any(r => IsTicked(r) && r.Writes.Contains(condition)),
-        _ when Content.Packs.FirstOrDefault(p => p.Name == condition) is { } pack => IsWritten(pack),
+        _ when Content.Packs.FirstOrDefault(p => p.Name == condition)
+            is { } pack => IsWritten(pack),
         _ => IsTicked(condition),
     };
 
     private bool IsWritten(Note note)
     {
-        if (Content.IsRoleNote(note)) return IsTicked(note.Path["Roles/".Length..^".md".Length]);
-        if (Content.IsPackNote(note)) return IsWritten(Content.Packs.First(p => p.Path == note.Path));
+        if (Content.IsRoleNote(note)) return IsTicked(RoleOf(note));
+        if (Content.IsPackNote(note)) return IsWritten(PackOf(note));
         return !note.Facts.Has("when") || Holds(note.Facts.Get("when"));
     }
 
+    private Role RoleOf(Note note) =>
+        Content.Roles.First(r => r.Path == note.Path);
+
+    private Pack PackOf(Note note) =>
+        Content.Packs.First(p => p.Path == note.Path);
+
     /// <summary>
-    /// The memory these choices make: the notes chosen, each tailored to the choices.
+    /// The memory these choices make: the notes chosen, each tailored to the
+    /// choices.
     /// </summary>
     public IReadOnlyList<MemoryFile> Write()
     {
         var notes = Content.Notes.Where(IsWritten).ToList();
         var written = notes.Select(n => n.Path).ToHashSet();
         return notes
-            .Select(n => new MemoryFile(n.Path, n.Path.EndsWith(".md") ? Tailor(n, written) : n.Body))
+            .Select(n => new MemoryFile(
+                n.Path, n.Path.EndsWith(".md") ? Tailor(n, written) : n.Body))
             .ToList();
     }
 
     private string Tailor(Note note, HashSet<string> written)
     {
+        var isPack = Content.IsPackNote(note);
+        var isWorkflow = note.Path == Content.WorkflowNote;
         var text = note.Body;
-        if (Content.IsPackNote(note))
+        if (isPack)
         {
-            var pack = Content.Packs.First(p => p.Path == note.Path);
-            text = Guidelines.Keep(text, index => IsTicked(pack.Guidelines[index - 1]));
+            var pack = PackOf(note);
+            text = Guidelines.Keep(
+                text, index => IsTicked(pack.Guidelines[index - 1]));
         }
-        if (note.Path == Content.WorkflowNote) text = Reorder(text);
+        if (isWorkflow) text = Reorder(text);
         text = Tags.Apply(text, Holds);
         text = DropItemsLinkingNowhere(note.Path, text, written);
-        if (Content.IsPackNote(note)) text = Guidelines.DropEmptySections(text);
-        if (note.Path == Content.WorkflowNote) text = Renumber(text);
+        if (isPack) text = Guidelines.DropEmptySections(text);
+        if (isWorkflow) text = Renumber(text);
         return CloseUp(text);
     }
 
@@ -199,7 +211,8 @@ public sealed partial class Setup
         if (heading < 0) return workflow;
         var first = lines.FindIndex(heading, l => StepNumber().IsMatch(l));
         var last = first;
-        while (last + 1 < lines.Count && StepNumber().IsMatch(lines[last + 1])) last++;
+        while (last + 1 < lines.Count && StepNumber().IsMatch(lines[last + 1]))
+            last++;
         lines.RemoveRange(first, last - first + 1);
         lines.InsertRange(first, Stages.Select(s => $"0. {s.Text}"));
         return string.Join('\n', lines);
@@ -212,23 +225,28 @@ public sealed partial class Setup
         var n = 0;
         for (var i = 0; i < lines.Length; i++)
         {
-            if (lines[i].StartsWith('#')) inSteps = lines[i] == Content.StepsHeading;
-            else if (inSteps && StepNumber().IsMatch(lines[i])) lines[i] = StepNumber().Replace(lines[i], $"{++n}. ");
+            if (lines[i].StartsWith('#'))
+                inSteps = lines[i] == Content.StepsHeading;
+            else if (inSteps && StepNumber().IsMatch(lines[i]))
+                lines[i] = StepNumber().Replace(lines[i], $"{++n}. ");
         }
         return string.Join('\n', lines);
     }
 
     /// <summary>
-    /// A list item that starts with a link to a note that isn't written goes, with any lines indented under it.
+    /// A list item that starts with a link to a note that isn't written goes,
+    /// with any lines indented under it.
     /// </summary>
-    private static string DropItemsLinkingNowhere(string path, string text, HashSet<string> written)
+    private static string DropItemsLinkingNowhere(
+        string path, string text, HashSet<string> written)
     {
         var kept = new List<string>();
         var dropIndent = -1;
         foreach (var line in text.Split('\n'))
         {
             var indent = line.Length - line.TrimStart().Length;
-            if (dropIndent >= 0 && line.Trim() != "" && indent > dropIndent) continue;
+            if (dropIndent >= 0 && line.Trim() != "" && indent > dropIndent)
+                continue;
             dropIndent = -1;
             var target = Links.ItemTarget(path, line);
             if (target != "" && !written.Contains(target))
@@ -242,14 +260,17 @@ public sealed partial class Setup
     }
 
     /// <summary>
-    /// Blank lines left behind by dropped text close up to one, and the note ends with one line break.
+    /// Blank lines left behind by dropped text close up to one, and the note
+    /// ends with one line break.
     /// </summary>
     private static string CloseUp(string text)
     {
         var lines = new List<string>();
         foreach (var line in text.Split('\n'))
-            if (line.Trim() != "" || (lines.Count > 0 && lines[^1].Trim() != "")) lines.Add(line);
-        while (lines.Count > 0 && lines[^1].Trim() == "") lines.RemoveAt(lines.Count - 1);
+            if (line.Trim() != "" || (lines.Count > 0 && lines[^1].Trim() != ""))
+                lines.Add(line);
+        while (lines.Count > 0 && lines[^1].Trim() == "")
+            lines.RemoveAt(lines.Count - 1);
         return string.Join('\n', lines) + "\n";
     }
 }

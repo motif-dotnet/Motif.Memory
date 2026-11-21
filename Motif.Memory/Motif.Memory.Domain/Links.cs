@@ -3,7 +3,8 @@ using System.Text.RegularExpressions;
 namespace Motif.Memory;
 
 /// <summary>
-/// The relative Markdown links between a memory's notes. Links in code aren't links.
+/// The relative Markdown links between a memory's notes. Links in code
+/// aren't links.
 /// </summary>
 public static partial class Links
 {
@@ -26,13 +27,18 @@ public static partial class Links
         {
             if (line.TrimStart().StartsWith("```")) inFence = !inFence;
             if (inFence) continue;
-            foreach (Match link in Link().Matches(CodeSpan().Replace(line, "")))
-                if (Resolve(notePath, link.Groups[1].Value) is { Length: > 0 } target) yield return target;
+            var links = Link().Matches(CodeSpan().Replace(line, ""));
+            foreach (Match link in links)
+            {
+                var target = Resolve(notePath, link.Groups[1].Value);
+                if (target != "") yield return target;
+            }
         }
     }
 
     /// <summary>
-    /// The path, from the memory's root, of the note a list item starts with a link to, or "" if it doesn't.
+    /// The path, from the memory's root, of the note a list item starts with
+    /// a link to, or "" if it doesn't.
     /// </summary>
     public static string ItemTarget(string notePath, string line)
     {
@@ -41,18 +47,24 @@ public static partial class Links
     }
 
     /// <summary>
-    /// A relative link's target from the memory's root, or "" for a link off the memory (a web address, an anchor).
+    /// A relative link's target from the memory's root, or "" for a link off
+    /// the memory (a web address, an anchor).
     /// </summary>
     public static string Resolve(string notePath, string href)
     {
-        if (href.Contains(':') || href.StartsWith('#') || href.StartsWith('/')) return "";
+        var offTheMemory =
+            href.Contains(':') || href.StartsWith('#') || href.StartsWith('/');
+        if (offTheMemory) return "";
         var hash = href.IndexOf('#');
         if (hash >= 0) href = href[..hash];
 
         var parts = notePath.Split('/').SkipLast(1).ToList();
         foreach (var part in Uri.UnescapeDataString(href).Split('/'))
         {
-            if (part == "..") { if (parts.Count > 0) parts.RemoveAt(parts.Count - 1); }
+            if (part == "..")
+            {
+                if (parts.Count > 0) parts.RemoveAt(parts.Count - 1);
+            }
             else if (part is not ("." or "")) parts.Add(part);
         }
         return string.Join('/', parts);
