@@ -1,0 +1,19 @@
+{
+  "stryker-config": {
+    "project": "Motif.Memory.ForSavingTheMemory.csproj",
+    "test-projects": [
+      "Checks/Motif.Memory.Specs/Motif.Memory.Specs.csproj"
+    ],
+    "reporters": [
+      "progress",
+      "cleartext",
+      "html",
+      "json"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    }
+  }
+}

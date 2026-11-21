@@ -49,8 +49,22 @@ public class SetupSpecs
         var f = new Fixture();
 
         f.Queries.Committing.Should().Be(Committing.Agreed);
-        f.Queries.Written.Should().Be(Written.Not);
-        f.Queries.Problem.Should().BeEmpty();
+        f.Queries.Saved.Should().Be(SavedMemory.None);
+        f.Queries.Problem.Should().Be(Problem.None);
+    }
+
+    [Fact]
+    public void Each_committing_choice_says_what_it_means()
+    {
+        var f = new Fixture();
+
+        f.Tasks.ChooseCommitting(Committing.Never);
+
+        f.Queries.Committings.Should().Equal(
+            new CommittingChoice(Committing.Agreed, "Once agreed",
+                "One commit for each set of changes you agree, pushed if the memory has a remote.", false),
+            new CommittingChoice(Committing.Asked, "Only when asked", "The agent commits when you tell it to.", false),
+            new CommittingChoice(Committing.Never, "Never", "You commit the memory yourself.", true));
     }
 
     [Fact]

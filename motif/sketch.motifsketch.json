@@ -82,24 +82,32 @@
       },
       {
         "id": "4d3e0c02",
-        "name": "Memory Files",
-        "description": "Writes the starter memory's Markdown files out",
+        "name": "For saving the memory",
+        "description": "One way of saving the starter memory's Markdown files: choosing where, then saving. The app offers each way the browser can use, in the order registered",
         "side": "driven",
         "isUser": false,
         "adapters": [
           {
             "id": "4d3e0d03",
-            "name": "Browser Files",
-            "technology": "Folder picker or zip download (JS interop)",
-            "description": "Writes the files into a folder the Developer picks, or downloads them as a zip where the browser can't",
+            "name": "Folder",
+            "technology": "Folder picker (JS interop)",
+            "description": "Writes the files into a folder the Developer picks, where the browser has a folder picker. Offered first",
             "kind": "real",
             "sources": [
               "4d3e0a03"
             ]
           },
           {
+            "id": "4d3e0d07",
+            "name": "Zip Download",
+            "technology": "Browser download (JS interop)",
+            "description": "Downloads the files as a zip, in every browser",
+            "kind": "real",
+            "sources": []
+          },
+          {
             "id": "4d3e0d04",
-            "name": "Fake Memory Files",
+            "name": "Fake Browser",
             "kind": "fake",
             "sources": []
           }

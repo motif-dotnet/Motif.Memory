@@ -29,16 +29,16 @@ public interface UserTasks
     void ChooseCommitting(Committing committing);
 
     /// <summary>
-    /// A folder that isn't empty is refused straight away, before the memory is written.
+    /// Chooses where to save the named way, such as by picking a folder.
+    /// A folder that isn't empty is refused straight away.
     /// </summary>
-    Task PickFolder();
+    Task ChooseWhere(string way);
 
     /// <summary>
-    /// Writes to the folder picked, which must then be picked again to write again.
+    /// Saves the memory the named way, where was chosen, which must then be
+    /// chosen again to save again.
     /// </summary>
-    Task WriteToFolder();
-
-    Task DownloadZip();
+    Task Save(string way);
 
     void DismissProblem();
 }

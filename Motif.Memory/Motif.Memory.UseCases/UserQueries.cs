@@ -12,26 +12,36 @@ public interface UserQueries
     /// </summary>
     IReadOnlyList<StageChoice> Stages { get; }
 
+    /// <summary>
+    /// Why the memory has no workflow, or empty when it has one.
+    /// </summary>
+    string WhyNoWorkflow { get; }
+
     IReadOnlyList<PackChoice> Packs { get; }
 
     Committing Committing { get; }
 
-    bool CanPickFolder { get; }
+    /// <summary>
+    /// The committing choices, in the order offered, with what each means.
+    /// </summary>
+    IReadOnlyList<CommittingChoice> Committings { get; }
 
     /// <summary>
-    /// The name of the folder the memory will be written to, or empty when none is picked.
+    /// The ways of saving this browser can use, in the order offered. The
+    /// first is the default.
     /// </summary>
-    string PickedFolder { get; }
+    IReadOnlyList<SavingWay> Ways { get; }
 
     /// <summary>
-    /// What the last write command did: written to a folder, downloaded as a zip, or nothing.
+    /// Why the ways this browser can't use aren't offered, or empty.
     /// </summary>
-    Written Written { get; }
+    string Unavailable { get; }
 
     /// <summary>
-    /// The name of the folder the memory was last written to, or empty.
+    /// What the last save did, and what to tell the agent, or
+    /// <see cref="SavedMemory.None"/>.
     /// </summary>
-    string FolderName { get; }
+    SavedMemory Saved { get; }
 
     /// <summary>
     /// The note in the memory that the Developer points their agent at, to finish setting it up.
@@ -39,17 +49,20 @@ public interface UserQueries
     string SetupNote { get; }
 
     /// <summary>
-    /// What went wrong with the last command, or empty.
+    /// What went wrong with the last command, or <see cref="Problem.None"/>.
     /// </summary>
-    string Problem { get; }
+    Problem Problem { get; }
 }
 
-public enum Written
+/// <param name="Steps">What to do, ending with telling the agent.</param>
+/// <param name="Tell">The sentence to tell the agent.</param>
+public sealed record SavedMemory(string Title, string Steps, string Tell)
 {
-    Not,
-    ToFolder,
-    AsZip,
+    public static readonly SavedMemory None = new("", "", "");
 }
+
+public sealed record CommittingChoice(
+    Committing Value, string Label, string Line, bool Chosen);
 
 /// <param name="Line">When to use it, as the start note says.</param>
 public sealed record RoleChoice(string Name, string Line, bool Ticked, bool Core);

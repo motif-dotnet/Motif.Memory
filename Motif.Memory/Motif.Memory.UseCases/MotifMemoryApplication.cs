@@ -1,19 +1,37 @@
 namespace Motif.Memory;
 
 /// <summary>
-/// Motif Memory itself: the setup choices, and writing the memory out.
+/// Motif Memory itself: the setup choices, and saving the memory.
+/// Call <see cref="Start"/> once at startup, so the ways of saving this
+/// browser can use are known before the page shows.
 /// </summary>
 public sealed class MotifMemoryApplication : UserTasks, UserQueries
 {
-    public const string ZipName = "agent-memory.zip";
-
-    private readonly MemoryFiles files;
+    private readonly IReadOnlyList<ForSavingTheMemory> ways;
     private readonly Setup setup;
+    private IReadOnlyList<ForSavingTheMemory> available = [];
 
-    public MotifMemoryApplication(MemoryContent content, MemoryFiles files)
+    /// <param name="ways">Offered in this order, where the browser can.
+    /// </param>
+    public MotifMemoryApplication(
+        MemoryContent content, IEnumerable<ForSavingTheMemory> ways)
     {
-        this.files = files;
+        this.ways = ways.ToList();
         setup = new Setup(new Content(content.Files));
+    }
+
+    public async Task Start()
+    {
+        var can = new List<ForSavingTheMemory>();
+        var cant = new List<string>();
+        foreach (var way in ways)
+        {
+            var why = await way.Unavailable();
+            if (why == "") can.Add(way);
+            else cant.Add(why);
+        }
+        available = can;
+        Unavailable = string.Join(" ", cant);
     }
 
     public IReadOnlyList<RoleChoice> Roles =>
@@ -31,6 +49,11 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
         var at = setup.Content.Body(Content.StartNote).IndexOf($"]({role.Path.Replace(" ", "%20")})", StringComparison.Ordinal);
         return at < 0 ? int.MaxValue : at;
     }
+
+    public string WhyNoWorkflow =>
+        Stages.All(s => s.IsUsers)
+            ? "No role with a stage is ticked, so the memory has no workflow."
+            : "";
 
     public IReadOnlyList<StageChoice> Stages
     {
@@ -69,17 +92,31 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
 
     public Committing Committing => setup.Committing;
 
-    public bool CanPickFolder => files.CanPickFolder;
+    public IReadOnlyList<CommittingChoice> Committings =>
+    [
+        Choice(Committing.Agreed, "Once agreed",
+            "One commit for each set of changes you agree, pushed if the "
+            + "memory has a remote."),
+        Choice(Committing.Asked, "Only when asked",
+            "The agent commits when you tell it to."),
+        Choice(Committing.Never, "Never",
+            "You commit the memory yourself."),
+    ];
 
-    public string PickedFolder { get; private set; } = "";
+    private CommittingChoice Choice(
+        Committing value, string label, string line) =>
+        new(value, label, line, value == setup.Committing);
 
-    public Written Written { get; private set; } = Written.Not;
+    public IReadOnlyList<SavingWay> Ways =>
+        available.Select(w => w.Way).ToList();
 
-    public string FolderName { get; private set; } = "";
+    public string Unavailable { get; private set; } = "";
+
+    public SavedMemory Saved { get; private set; } = SavedMemory.None;
 
     public string SetupNote => Content.SetupNote;
 
-    public string Problem { get; private set; } = "";
+    public Problem Problem { get; private set; } = Problem.None;
 
     public void TickRole(string name, bool ticked) => setup.TickRole(name, ticked);
 
@@ -95,62 +132,36 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
 
     public void ChooseCommitting(Committing committing) => setup.Committing = committing;
 
-    public async Task PickFolder()
+    public async Task ChooseWhere(string way)
     {
-        Problem = "";
-        switch (await files.PickFolder())
+        DismissProblem();
+        if (await Way(way).ChooseWhere() is Choosing.Refused refused)
+            Problem = new Problem(refused.Title, refused.Problem);
+    }
+
+    public async Task Save(string way)
+    {
+        DismissProblem();
+        Saved = SavedMemory.None;
+        switch (await Way(way).Save(setup.Write()))
         {
-            case FolderPick.Picked picked:
-                PickedFolder = picked.FolderName;
+            // The last steps are the agent's, through the setup note, so the
+            // outcome says how to start them.
+            case Saving.Saved saved:
+                Saved = new SavedMemory(
+                    saved.Title,
+                    $"{saved.Steps} To finish, tell your agent:".TrimStart(),
+                    $"Read {SetupNote} in this folder and follow it.");
                 break;
-            case FolderPick.NotEmpty notEmpty:
-                PickedFolder = "";
-                Problem = $"“{notEmpty.FolderName}” isn't empty, so it can't hold the memory. {PickAnEmptyFolder}";
-                break;
-            case FolderPick.Failed failed:
-                PickedFolder = "";
-                Problem = $"The folder can't be opened. {failed.Reason} Try another folder, or download the zip.";
+            case Saving.Refused refused:
+                Problem = new Problem(
+                    "The memory wasn't written", refused.Problem);
                 break;
         }
     }
 
-    private const string PickAnEmptyFolder = "Pick an empty folder, or a fresh git repo with nothing in it but .git.";
+    private ForSavingTheMemory Way(string name) =>
+        available.Single(w => w.Way.Name == name);
 
-    public async Task WriteToFolder()
-    {
-        Problem = "";
-        Written = Written.Not;
-        if (PickedFolder == "")
-        {
-            Problem = "Pick a folder to write the memory to first.";
-            return;
-        }
-        var write = await files.WriteToFolder(setup.Write());
-        // Whatever happened, the folder now has files in it, or may have.
-        PickedFolder = "";
-        switch (write)
-        {
-            case FolderWrite.Written written:
-                FolderName = written.FolderName;
-                Written = Written.ToFolder;
-                break;
-            case FolderWrite.NotEmpty notEmpty:
-                Problem = $"“{notEmpty.FolderName}” isn't empty any more, so nothing was written. {PickAnEmptyFolder}";
-                break;
-            case FolderWrite.Failed failed:
-                Problem = $"Writing to the folder failed. {failed.Reason} Try another folder, or download the zip.";
-                break;
-        }
-    }
-
-    public async Task DownloadZip()
-    {
-        Problem = "";
-        Written = Written.Not;
-        await files.DownloadZip(ZipName, setup.Write());
-        FolderName = "";
-        Written = Written.AsZip;
-    }
-
-    public void DismissProblem() => Problem = "";
+    public void DismissProblem() => Problem = Problem.None;
 }

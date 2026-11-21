@@ -8,13 +8,6 @@ namespace Motif.Memory.App;
 /// </summary>
 public partial class Shell : IDisposable
 {
-    private static readonly (Committing Value, string Label, string Line)[] Committings =
-    [
-        (Committing.Agreed, "Once agreed", "One commit for each set of changes you agree, pushed if the memory has a remote."),
-        (Committing.Asked, "Only when asked", "The agent commits when you tell it to."),
-        (Committing.Never, "Never", "You commit the memory yourself."),
-    ];
-
     private bool started;
     private bool busy;
     private bool helpOpen;
@@ -35,17 +28,24 @@ public partial class Shell : IDisposable
 
     private static string Plural(int count, string one, string many) => $"{count} {(count == 1 ? one : many)}";
 
-    private async Task PickFolder() => await Run(App.PickFolder, "The folder wasn't picked");
+    private static MarkupString Icon(SavingWay way) =>
+        way.Icon == "folder" ? Icons.Folder : Icons.Download;
 
-    private async Task WriteToFolder() => await Writing(App.WriteToFolder);
+    private async Task ChooseWhere(SavingWay way) => await Run(() => App.ChooseWhere(way.Name));
 
-    private async Task DownloadZip() => await Writing(App.DownloadZip);
+    private async Task Save(SavingWay way)
+    {
+        await Run(() => App.Save(way.Name));
+        // The outcome is a sentence to pass on, so the toast offers it to copy and stays until dismissed.
+        if (App.Saved != SavedMemory.None)
+            Toaster.Offer(App.Saved.Title, App.Saved.Steps, App.Saved.Tell);
+    }
 
     /// <summary>
     /// Runs a command that may go wrong.
     /// What went wrong is its outcome, so it's a toast, as in every Motif tool.
     /// </summary>
-    private async Task Run(Func<Task> command, string failure)
+    private async Task Run(Func<Task> command)
     {
         busy = true;
         try
@@ -56,23 +56,11 @@ public partial class Shell : IDisposable
         {
             busy = false;
         }
-        if (App.Problem != "")
+        if (App.Problem != Problem.None)
         {
-            Toaster.Problem(failure, [App.Problem]);
+            Toaster.Problem(App.Problem.Title, [App.Problem.Text]);
             App.DismissProblem();
         }
-    }
-
-    private async Task Writing(Func<Task> write)
-    {
-        await Run(write, "The memory wasn't written");
-        // The last steps are the agent's, through the setup note, so the outcome says how to start them.
-        // That's a sentence to pass on, so the toast offers it to copy and stays until dismissed.
-        var tell = $"Read {App.SetupNote} in this folder and follow it.";
-        if (App.Written == Written.ToFolder)
-            Toaster.Offer($"Memory written to “{App.FolderName}”", "To finish, tell your agent:", tell);
-        else if (App.Written == Written.AsZip)
-            Toaster.Offer("Memory downloaded", $"Unzip {MotifMemoryApplication.ZipName} into a folder that stays put. To finish, tell your agent:", tell);
     }
 
     // Dragging a stage: the one picked up, and the one it's over. The up and down buttons do the same without a mouse.

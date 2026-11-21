@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Motif.Memory\Motif.Memory.UseCases\Motif.Memory.UseCases.csproj" />
+    <!-- Fake Fittings implement the Seams, which live in their adapters. -->
+    <ProjectReference Include="..\..\Adapters\Motif.Memory.ForSavingTheMemory\Motif.Memory.ForSavingTheMemory.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -19,7 +19,7 @@
     <ProjectReference Include="..\Motif.Memory\Motif.Memory.UseCases\Motif.Memory.UseCases.csproj" />
     <!-- The Web App is the composition root, so it alone knows the real adapters. -->
     <ProjectReference Include="..\Adapters\Motif.Memory.MemoryContent\Motif.Memory.MemoryContent.csproj" />
-    <ProjectReference Include="..\Adapters\Motif.Memory.MemoryFiles\Motif.Memory.MemoryFiles.csproj" />
+    <ProjectReference Include="..\Adapters\Motif.Memory.ForSavingTheMemory\Motif.Memory.ForSavingTheMemory.csproj" />
   </ItemGroup>
 
 </Project>

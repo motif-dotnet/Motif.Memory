@@ -36,6 +36,14 @@ The part of every memory that isn't a choice: the starting point, the Memory Edi
 - **Status:** proposed
 - **See also:** [Memory Auditor](#memory-auditor), [Memory Editor](#memory-editor), [Starting point](#starting-point)
 
+## Deep adapter
+
+An adapter with real work behind a small port, whose own logic runs in every spec because only its Fitting is faked. The folder and zip adapters at For saving the memory are deep.
+
+- **Kind:** domain concept
+- **Avoid:** deep port (depth belongs to the module, not its interface)
+- **See also:** [Fitting](#fitting), [Seam](#seam)
+
 ## Design guideline
 
 A piece of advice on how to design or write the code, picked from packs at setup and kept in the memory. Only what needs judgement: anything a formatter or analyser can enforce belongs in the code-style baseline that Motif Sketch's solution plan sets up.
@@ -55,6 +63,26 @@ The memory's own text calls this person "the user", the agent's word for them. T
 - **Avoid:** user (that's the port, and the memory's word, not ours)
 - **Status:** proposed
 - **Sketch:** `4d3e0a02`
+
+## Fitting
+
+The thin part of an adapter that touches the outside world. Each member is one call to it, with no branches worth testing. There's a real Fitting and a fake one, and specs fake the Fitting.
+
+- **Kind:** domain concept
+- **Avoid:** core (the domain), driver (the driving side), gateway, wrapper
+- **In code:** `JsInteropFolder`, `JsInteropDownload`, `FakeFolder`, `FakeDownload`
+- **See also:** [Seam](#seam)
+
+## For saving the memory
+
+The port for one way of saving the starter memory's Markdown files, such as into a folder or as a zip. Each way has two steps, choosing where, then saving, and its own words for both. The app offers each way the browser can use, in the order registered, and the first is the default.
+
+- **Kind:** port
+- **Avoid:** Memory Files (its old name, which leaves out the zip)
+- **In code:** `ForSavingTheMemory`; real adapters `ForSavingTheMemoryViaFolder`, which reaches the browser through the Folder Seam (`Folder`; real Fitting `JsInteropFolder`, fake `FakeFolder`), and `ForSavingTheMemoryViaZipDownload`, through the Download Seam (`Download`; real Fitting `JsInteropDownload`, fake `FakeDownload`). The User port shows each way as a `SavingWay`
+- **Status:** proposed
+- **Sketch:** `4d3e0c02`
+- **See also:** [Memory Repo](#memory-repo), [Way of saving](#way-of-saving)
 
 ## Instructions file
 
@@ -112,16 +140,6 @@ The core role that changes the memory when the user asks: roles, rules, guidelin
 - **Status:** proposed
 - **See also:** [Core](#core), [Role](#role)
 
-## Memory Files
-
-The port that writes the starter memory's Markdown files out.
-
-- **Kind:** port
-- **In code:** `MemoryFiles`; real adapter `BrowserFilesMemoryFiles`
-- **Status:** proposed
-- **Sketch:** `4d3e0c02`
-- **See also:** [Memory Repo](#memory-repo)
-
 ## Memory Repo
 
 Where the starter memory goes on the Developer's computer: Markdown files the Developer makes into a git repo of its own.
@@ -130,7 +148,7 @@ Where the starter memory goes on the Developer's computer: Markdown files the De
 - **Avoid:** memory folder, vault
 - **Status:** proposed
 - **Sketch:** `4d3e0a03`
-- **See also:** [Memory](#memory), [Memory Files](#memory-files)
+- **See also:** [Memory](#memory), [For saving the memory](#for-saving-the-memory)
 
 ## Motif Memory
 
@@ -169,6 +187,15 @@ The one thing the agent's instructions file holds: where the memory's starting p
 - **Avoid:** link, import, include
 - **Status:** proposed
 - **See also:** [Instructions file](#instructions-file), [Starting point](#starting-point)
+
+## Problem
+
+What went wrong with the last command: what didn't happen, as its title, and why. Shown as a toast here, but any UI could show it.
+
+- **Kind:** domain concept
+- **Avoid:** error (nothing has failed in the app)
+- **In code:** `Problem`, `Problem.None`
+- **Status:** proposed
 
 ## Repo memory
 
@@ -216,6 +243,15 @@ One agreed line in a memory note, such as one of a role's Rules or a design guid
 - **Avoid:** instruction (that's the instructions file), policy
 - **Status:** proposed
 - **See also:** [Design guideline](#design-guideline) (a kind of rule), [Lesson](#lesson)
+
+## Seam
+
+The interface between an adapter and its Fitting, owned by the adapter and named for what it reaches (after Michael Feathers: a place where behaviour can be swapped without editing the code around it). Not a kind of port. The folder adapter has the Folder Seam, whose failures are its own kinds (declined, refused, failed), and the zip adapter the Download Seam.
+
+- **Kind:** domain concept
+- **Avoid:** inner port (it would be mistaken for a port in the sketch)
+- **In code:** `Folder`, `ChosenFolder`, `Download`
+- **See also:** [Fitting](#fitting)
 
 ## Setup note
 
@@ -285,6 +321,16 @@ The driving port people use. Its real adapter is the Web App: the setup page and
 - **In code:** `UserTasks`, `UserQueries`
 - **Status:** proposed
 - **Sketch:** `4d3e0c01`
+
+## Way of saving
+
+One way the memory can be saved, such as into a folder or as a zip: an adapter at [For saving the memory](#for-saving-the-memory). A way the browser can't use, such as a folder in a browser with no folder picker, isn't offered, and the page says why.
+
+- **Kind:** domain concept
+- **Avoid:** save method, target, destination
+- **In code:** `SavingWay`
+- **Status:** proposed
+- **See also:** [For saving the memory](#for-saving-the-memory)
 
 ## Workflow
 

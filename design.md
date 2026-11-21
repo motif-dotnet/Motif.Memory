@@ -4,19 +4,19 @@ How the first version is built. The why is in [decisions.md](decisions.md) (#33 
 
 ## What it does
 
-One page. The Developer picks the folder the memory will live in, where the browser can, makes the setup choices, every one with a default already chosen, then writes the memory to that folder or downloads it as a zip (#49). A toast then says what to tell their agent, which finishes the setup through the setup note (#42). There's no catalogue yet (#33), and the app never reads an existing memory (#28).
+One page. The Developer chooses where the memory will be saved, such as by picking a folder, where the browser can, makes the setup choices, every one with a default already chosen, then saves the memory one of the ways the browser can use: into that folder or as a zip (#49, #50). A toast then says what to tell their agent, which finishes the setup through the setup note (#42). There's no catalogue yet (#33), and the app never reads an existing memory (#28).
 
 The choices, in the page's order:
 
 | Section | Choice | Default |
 |---|---|---|
-| Folder | Where the memory will live: shown only where the browser has a folder picker (#49) | None picked |
+| Folder | Where the memory will live: shown for each way of saving with somewhere to choose, so only where the browser has a folder picker (#49, #50) | None picked |
 | Roles | Tick each non-core role. The core roles (Memory Editor, Memory Auditor) are shown ticked and can't be unticked | All ticked |
 | Workflow | Move each stage up or down, the user's stages among them. A warning shows beside a stage that reads a temporary doc no earlier stage writes | Workflow.md's order |
 | Guidelines | Untick single guidelines in any pack; leave out whole packs other than General (#36) | Everything ticked |
 | Committing | When the memory's changes are committed: once agreed, only when asked, or never (the Developer commits) (#23) | Once agreed |
 
-Then **Write to “*folder*”** (where the browser has a folder picker, naming the folder picked) and **Download zip** (always).
+Then a button for each way of saving the browser can use, in the order registered, the first as the primary: **Write to “*folder*”** (naming the folder picked) and **Download zip** (always). A way that isn't ready says what to do first, and a way the browser can't use is left out, with a line saying why (#50).
 
 ## Content format
 
@@ -111,6 +111,7 @@ New file: `Content/Set up.md`, the setup note (#42), with its commit step tagged
 
 - **Folder** (#37, #49): picked first, through the browser's folder picker, asking for write access. A folder that holds anything but `.git` is refused as soon as it's picked, and the page says it must be empty or a fresh git repo. Writing checks again, in case it has filled since, and writes nothing if so. Each folder picked is written to once, so writing again means picking again. Cancelling the picker keeps the folder picked before. The app lists the folder's names only, and never opens its files.
 - **Zip:** the same files in `agent-memory.zip`, at its root, built in the adapter with `System.IO.Compression`. The browser only saves the bytes.
+- Each way is its own adapter at the For saving the memory port, with its own words: its heading, its labels, what it says when it's done or refused (#50).
 - Either way the page stays on setup, with every choice kept, and a toast says what to tell the agent: "Read Set up.md in this folder and follow it." For a zip, it says to unzip it first, into a folder that stays put. The toast shows the sentence on a line of its own, with a Copy button under it, and stays until it's dismissed (#45).
 
 ## Ports
@@ -133,28 +134,26 @@ public interface MemoryContent
 /// </summary>
 public sealed record MemoryFile(string Path, string Text);
 
-public interface MemoryFiles
+/// <summary>
+/// One way of saving the memory, such as into a folder or as a zip.
+/// </summary>
+public interface ForSavingTheMemory
 {
-    bool CanPickFolder { get; }
+    Task<string> Unavailable();
 
-    /// <summary>
-    /// Shows the folder picker, and keeps the folder if it's empty or holds only .git.
-    /// </summary>
-    Task<FolderPick> PickFolder();
+    SavingWay Way { get; }
 
-    /// <summary>
-    /// Writes the files into the folder picked, if it still holds nothing but .git.
-    /// Each folder picked is written to once: it must be picked again to write again.
-    /// </summary>
-    Task<FolderWrite> WriteToFolder(IReadOnlyList<MemoryFile> files);
+    Task<Choosing> ChooseWhere();
 
-    Task DownloadZip(string name, IReadOnlyList<MemoryFile> files);
+    Task<Saving> Save(IReadOnlyList<MemoryFile> files);
 }
 ```
 
-`FolderPick` says picked (with the folder's name), cancelled, not empty, or failed. `FolderWrite` says written (with the folder's name, for the toast), not empty, or failed.
+`Unavailable` says why the browser can't save this way, or nothing when it can. `SavingWay` is what the user sees of the way as it stands: its name, its icon, what saving this way means, its labels for choosing and saving, where was chosen, and what to do before it's ready, if anything; it's ready when there's nothing to do first. `Choosing` says chosen, kept (the picker was closed), or refused (with a title and the problem). `Saving` says saved (with what happened and any steps before telling the agent), or refused (with the problem).
 
-**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice, `CanPickFolder`, the folder picked, what the last write did (and the folder's name), the setup note's name, and the problem to show. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, pick a folder, write to it, download the zip, dismiss the problem.
+**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice and the choices' labels and lines, the ways of saving offered (and why any aren't), what the last save did and what to tell the agent, the setup note's name, and the problem to show, with its title. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, choose where to save a way, save it, dismiss the problem.
+
+What a UI in another technology would have to write again is behind the User port, where specs reach it: the wording, labels and outcomes. The page keeps only layout, menus, theme, toasts, busy and drag marks (#51).
 
 The rules that make a memory from the choices and the content (front matter, tags, the workflow's order and warnings) are in `Motif.Memory.Domain`.
 
@@ -163,11 +162,12 @@ The rules that make a memory from the choices and the content (front matter, tag
 | Adapter | Project | How |
 |---|---|---|
 | Bundled Content | `Motif.Memory.MemoryContent` | Embeds `../../Content/**` as resources, dot-files too, with each file's path kept as its logical name (#40) |
-| Browser Files | `Motif.Memory.MemoryFiles` | A JS module (`wwwroot/files.js`) for `showDirectoryPicker` and saving the zip's bytes; the zip is made in C# |
-| Fake Memory Files | `Motif.Memory.Fakes` | Records what was written. Picking can be set to cancel, find the folder not empty or fail, writing to find it filled since or fail, and it can have no folder picker |
+| Folder | `Motif.Memory.ForSavingTheMemory` | Its rules (what counts as empty, writing a folder once, the failures' wording) are C#. It reaches the browser through the Folder Seam (`Folder`), whose real Fitting, `JsInteropFolder`, makes one call to `wwwroot/files.js` per member |
+| Zip Download | `Motif.Memory.ForSavingTheMemory` | Makes the zip in C#, and has the browser save it through the Download Seam (`Download`), whose real Fitting, `JsInteropDownload`, calls `wwwroot/download.js` |
+| Fake Folder, Fake Download | `Motif.Memory.Fakes` | The fake Fittings, so specs run the real adapters. The picker hands back a folder held in memory, or fails as the Folder Seam's own kinds (declined, refused, failed), which the real Fitting maps from the browser's error names; writing can fail; there can be no folder picker. The download keeps the last one |
 | Fake Memory Content | `Motif.Memory.Fakes` | Content a spec makes up, for format rules the real content doesn't use |
 
-The Web App is the composition root (`Program.cs`), so it alone references the real adapters, as Motif Glossary's does. That's one reference more than the plan's §3, which covers the stubs.
+The Web App is the composition root (`Program.cs`), so it alone references the real adapters, as Motif Glossary's does. It registers each way of saving as the port, folder then zip, and that order is the order offered (#50). That's one reference more than the plan's §3, which covers the stubs.
 
 ## The page
 
@@ -180,7 +180,7 @@ Built on the Motif web kit, as Motif Glossary is: copy `scripts/sync-suite.sh` f
 
 ## Specs
 
-Through the User port, with the real Bundled Content where the real content is the point and Fake Memory Content for the format's own rules. The behaviours to cover:
+Through the User port, with the real Bundled Content where the real content is the point and Fake Memory Content for the format's own rules. Saving goes through the real adapters, folder then zip, over the fake Fittings. The behaviours to cover:
 
 1. The defaults are as in the table above.
 2. With everything ticked, every file in `Content/` is written, with no front matter and no tags left in any of them.
@@ -192,7 +192,7 @@ Through the User port, with the real Bundled Content where the real content is t
 8. An unticked guideline isn't written; a section with none left loses its heading; a pack left out loses its file and General's links to it.
 9. Each committing choice writes its own version of the Memory Editor's rule.
 10. The setup note has the agent add the README's pointer line and delete the note, and its first commit follows the committing choice.
-11. A folder that isn't empty is refused when it's picked, with a problem; a cancelled picker keeps the folder picked before; nothing is written before a folder is picked, or to one that has filled since; a folder written must be picked again; a failed write doesn't report an earlier one; a folder written or a zip downloaded says so, and keeps the choices.
+11. A folder that isn't empty is refused when it's picked, with a problem; a cancelled picker keeps the folder picked before; nothing is written before a folder is picked, or to one that has filled since; a folder written must be picked again; a failed write doesn't report an earlier one; a folder written or a zip downloaded says so, and keeps the choices. The folder is offered first, then the zip; a browser with no folder picker is offered only the zip, and told why.
 12. The content is valid: every tag is closed and its conditions known, every role note has front matter, and every doc named in front matter has its bullet in `Temporary Docs.md`.
 
 ## Building it

@@ -21,20 +21,20 @@
                 <h1>Set up your agent's memory</h1>
                 <p class="lead">Choose the roles, workflow and design guidelines that suit your way of working. Every choice has a default, so you can write the memory straight away and tailor it later.</p>
 
-                @if (App.CanPickFolder)
+                @foreach (var way in App.Ways.Where(w => w.Choose != ""))
                 {
                     <details class="choice" open>
-                        <summary><h2>Folder</h2><span class="count">@(App.PickedFolder == "" ? "not picked" : App.PickedFolder)</span></summary>
-                        <p class="what">Where your memory will live. It must be empty, or a fresh git repo with nothing in it but <code>.git</code>, and it becomes a git repo of its own.</p>
+                        <summary><h2>@way.Name</h2><span class="count">@way.Where</span></summary>
+                        <p class="what">@way.About</p>
                         <div class="folder">
-                            @if (App.PickedFolder == "")
+                            @if (way.Where == "")
                             {
-                                <button class="ghost strong" disabled="@busy" @onclick="PickFolder">@Icons.Folder Pick a folder…</button>
+                                <button class="ghost strong" disabled="@busy" @onclick="() => ChooseWhere(way)">@Icon(way) @way.Choose</button>
                             }
                             else
                             {
-                                <span class="picked">@Icons.Folder <b>@App.PickedFolder</b></span>
-                                <button class="ghost small" disabled="@busy" @onclick="PickFolder">Change…</button>
+                                <span class="picked">@Icon(way) <b>@way.Where</b></span>
+                                <button class="ghost small" disabled="@busy" @onclick="() => ChooseWhere(way)">@way.Choose</button>
                             }
                         </div>
                     </details>
@@ -60,16 +60,16 @@
                 <details class="choice" open>
                     <summary>
                         <h2>Workflow</h2>
-                        <span class="count">@(App.Stages.All(s => s.IsUsers) ? "none" : Plural(App.Stages.Count, "stage", "stages"))</span>
+                        <span class="count">@(App.WhyNoWorkflow != "" ? "none" : Plural(App.Stages.Count, "stage", "stages"))</span>
                         @if (App.Stages.Any(s => s.Warning != ""))
                         {
                             <span class="count warn">@Icons.Warning @Plural(App.Stages.Count(s => s.Warning != ""), "warning", "warnings")</span>
                         }
                     </summary>
                     <p class="what">The ideal order of stages for a piece of work. Drag a stage to its place, or move it up or down; a warning shows where a stage would read a temporary doc no earlier stage writes. Your last manual testing stays last.</p>
-                    @if (App.Stages.All(s => s.IsUsers))
+                    @if (App.WhyNoWorkflow != "")
                     {
-                        <p class="muted">No role with a stage is ticked, so the memory has no workflow.</p>
+                        <p class="muted">@App.WhyNoWorkflow</p>
                     }
                     else
                     {
@@ -138,38 +138,28 @@
                 </details>
 
                 <details class="choice" open>
-                    <summary><h2>Committing</h2><span class="count">@Committings.First(c => c.Value == App.Committing).Label</span></summary>
+                    <summary><h2>Committing</h2><span class="count">@App.Committings.Single(c => c.Chosen).Label</span></summary>
                     <p class="what">The agent never changes the memory without your OK. This is when it commits the changes you agree.</p>
                     <div class="radios" role="radiogroup" aria-label="Committing">
-                        @foreach (var (value, label, line) in Committings)
+                        @foreach (var choice in App.Committings)
                         {
                             <label class="tick">
-                                <input type="radio" name="committing" checked="@(App.Committing == value)" @onchange="() => App.ChooseCommitting(value)" />
-                                <span><b>@label</b><span class="line">@line</span></span>
+                                <input type="radio" name="committing" checked="@choice.Chosen" @onchange="() => App.ChooseCommitting(choice.Value)" />
+                                <span><b>@choice.Label</b><span class="line">@choice.Line</span></span>
                             </label>
                         }
                     </div>
                 </details>
 
                 <div class="write">
-                    @if (App.CanPickFolder)
+                    @foreach (var way in App.Ways)
                     {
-                        @if (App.PickedFolder == "")
-                        {
-                            <button class="primary" disabled>@Icons.Folder Write to a folder</button>
-                            <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
-                            <span class="muted">Pick the folder at the top first, or download the memory as a zip.</span>
-                        }
-                        else
-                        {
-                            <button class="primary" disabled="@busy" @onclick="WriteToFolder">@Icons.Folder Write to “@App.PickedFolder”</button>
-                            <button class="ghost strong" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
-                        }
+                        @* The first way is the default, so it's the primary button. *@
+                        <button class="@(way == App.Ways[0] ? "primary" : "ghost strong")" title="@way.About" disabled="@(busy || !way.CanSave)" @onclick="() => Save(way)">@Icon(way) @way.Save</button>
                     }
-                    else
+                    @foreach (var hint in App.Ways.Select(w => w.Hint).Append(App.Unavailable).Where(h => h != ""))
                     {
-                        <button class="primary" disabled="@busy" @onclick="DownloadZip">@Icons.Download Download zip</button>
-                        <span class="muted">This browser can't write to a folder, so the memory comes as a zip.</span>
+                        <span class="muted">@hint</span>
                     }
                 </div>
                 <p class="muted after">Then point your agent at the memory's <code>@App.SetupNote</code>: it makes the folder a git repo, adds the one line its instructions file needs, and deletes the note.</p>
@@ -191,7 +181,7 @@
                 <li><b>Repo notes</b> in its <code>Repos/</code> folder: your own setup for one repo, such as remotes and accounts.</li>
                 <li><b>Repo memory</b>: a file in each repo's <code>motif/</code> folder, committed, for what anyone working on that repo needs.</li>
             </ul>
-            <p class="help">Everything happens in this browser: nothing is uploaded, and there's no sign-in. Visits are counted, with no cookies, by <a href="https://www.goatcounter.com" target="_blank" rel="noopener">GoatCounter</a>. Motif Memory writes only inside the folder you pick.</p>
+            <p class="help">Everything happens in this browser: nothing is uploaded, and there's no sign-in. Visits are counted, with no cookies, by <a href="https://www.goatcounter.com" target="_blank" rel="noopener">GoatCounter</a>.</p>
         </HelpDialog>
     }
 

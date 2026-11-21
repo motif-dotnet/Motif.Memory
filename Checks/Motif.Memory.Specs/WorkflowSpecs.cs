@@ -134,4 +134,18 @@ public class WorkflowSpecs
 
         f.StageNames.Should().Equal(before);
     }
+
+    [Fact]
+    public void A_memory_with_no_role_with_a_stage_says_why_it_has_no_workflow()
+    {
+        var f = new Fixture();
+        f.Queries.WhyNoWorkflow.Should().BeEmpty();
+
+        foreach (var role in f.Queries.Roles.Select(r => r.Name).ToList())
+            f.Tasks.TickRole(role, false);
+
+        f.Queries.Stages.Should().OnlyContain(s => s.IsUsers);
+        f.Queries.WhyNoWorkflow.Should().Be(
+            "No role with a stage is ticked, so the memory has no workflow.");
+    }
 }

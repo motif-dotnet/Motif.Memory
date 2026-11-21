@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{09
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.MemoryContent", "Adapters\Motif.Memory.MemoryContent\Motif.Memory.MemoryContent.csproj", "{EA1395C0-3E4F-4899-A7C8-FBECDF94D050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.MemoryFiles", "Adapters\Motif.Memory.MemoryFiles\Motif.Memory.MemoryFiles.csproj", "{48C855A8-44F9-4C1E-B7CC-CEC254BAA662}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.ForSavingTheMemory", "Adapters\Motif.Memory.ForSavingTheMemory\Motif.Memory.ForSavingTheMemory.csproj", "{48C855A8-44F9-4C1E-B7CC-CEC254BAA662}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Checks", "Checks", "{36CBE016-26E7-D9D2-6ED5-AE44737356E1}"
 EndProject
