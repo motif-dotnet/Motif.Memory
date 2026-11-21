@@ -37,16 +37,20 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
     public IReadOnlyList<RoleChoice> Roles =>
         setup.Content.Roles
             .OrderBy(r => r.Core)
-            .ThenBy(r => StartNoteOrder(r))
-            .Select(r => new RoleChoice(r.Name, r.Line, setup.IsTicked(r), r.Core))
+            .ThenBy(StartNoteOrder)
+            .Select(r => new RoleChoice(
+                r.Name, r.Line, setup.IsTicked(r), r.Core))
             .ToList();
 
     /// <summary>
-    /// Roles come in the start note's order, which is the order they're used in.
+    /// Roles come in the start note's order, which is the order they're used
+    /// in.
     /// </summary>
     private int StartNoteOrder(Role role)
     {
-        var at = setup.Content.Body(Content.StartNote).IndexOf($"]({role.Path.Replace(" ", "%20")})", StringComparison.Ordinal);
+        var link = $"]({role.Path.Replace(" ", "%20")})";
+        var at = setup.Content.Body(Content.StartNote)
+            .IndexOf(link, StringComparison.Ordinal);
         return at < 0 ? int.MaxValue : at;
     }
 
@@ -64,8 +68,19 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
                 .Select((s, i) =>
                 {
                     var pinned = setup.IsPinned(s);
-                    var down = !pinned && i < stages.Count - 1 && !setup.IsPinned(stages[i + 1]);
-                    return new StageChoice(s.Id, s.Name, s.Summary, s.IsUsers, Warning(s), pinned, !pinned && i > 0, down);
+                    var up = !pinned && i > 0;
+                    var down = !pinned
+                        && i < stages.Count - 1
+                        && !setup.IsPinned(stages[i + 1]);
+                    return new StageChoice(
+                        s.Id,
+                        s.Name,
+                        s.Summary,
+                        s.IsUsers,
+                        Warning(s),
+                        pinned,
+                        CanMoveUp: up,
+                        CanMoveDown: down);
                 })
                 .ToList();
         }
@@ -75,7 +90,10 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
     {
         var docs = setup.Unwritten(stage);
         if (docs.Count == 0) return "";
-        var names = string.Join(" and ", docs.Select(d => $"the {char.ToLowerInvariant(d.Name[0])}{d.Name[1..]}"));
+        var names = string.Join(
+            " and ",
+            docs.Select(d =>
+                $"the {char.ToLowerInvariant(d.Name[0])}{d.Name[1..]}"));
         return $"Reads {names}, which no earlier stage writes.";
     }
 
@@ -83,10 +101,18 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
         setup.Content.Packs
             .OrderBy(p => p.Optional)
             .ThenBy(p => p.Name, StringComparer.Ordinal)
-            .Select(p => new PackChoice(p.Name, p.Optional, setup.IsTicked(p),
-                p.Guidelines
-                    .GroupBy(g => g.Section)
-                    .Select(s => new GuidelineSection(s.Key, s.Select(g => new GuidelineChoice(g.Id, g.Text, setup.IsTicked(g))).ToList()))
+            .Select(p => new PackChoice(
+                p.Name, p.Optional, setup.IsTicked(p), Sections(p)))
+            .ToList();
+
+    private List<GuidelineSection> Sections(Pack pack) =>
+        pack.Guidelines
+            .GroupBy(g => g.Section)
+            .Select(section => new GuidelineSection(
+                section.Key,
+                section
+                    .Select(g => new GuidelineChoice(
+                        g.Id, g.Text, setup.IsTicked(g)))
                     .ToList()))
             .ToList();
 
@@ -118,7 +144,8 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
 
     public Problem Problem { get; private set; } = Problem.None;
 
-    public void TickRole(string name, bool ticked) => setup.TickRole(name, ticked);
+    public void TickRole(string name, bool ticked) =>
+        setup.TickRole(name, ticked);
 
     public void MoveStageUp(int id) => setup.MoveStage(id, -1);
 
@@ -126,11 +153,14 @@ public sealed class MotifMemoryApplication : ForDoing, ForSeeing
 
     public void MoveStageTo(int id, int onto) => setup.MoveStageTo(id, onto);
 
-    public void TickPack(string name, bool ticked) => setup.TickPack(name, ticked);
+    public void TickPack(string name, bool ticked) =>
+        setup.TickPack(name, ticked);
 
-    public void TickGuideline(string id, bool ticked) => setup.TickGuideline(id, ticked);
+    public void TickGuideline(string id, bool ticked) =>
+        setup.TickGuideline(id, ticked);
 
-    public void ChooseCommitting(Committing committing) => setup.Committing = committing;
+    public void ChooseCommitting(Committing committing) =>
+        setup.Committing = committing;
 
     public async Task ChooseWhere(string way)
     {

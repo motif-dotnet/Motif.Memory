@@ -12,6 +12,8 @@ public sealed class ForSavingTheMemoryViaZipDownload(Download browser)
 {
     public const string ZipName = "agent-memory.zip";
 
+    private static readonly UTF8Encoding WithoutMark = new(false);
+
     public Task<string> Unavailable() => Task.FromResult("");
 
     public SavingWay Way { get; } = new(
@@ -49,7 +51,7 @@ public sealed class ForSavingTheMemoryViaZipDownload(Download browser)
                 using var entry = zip
                     .CreateEntry(file.Path, CompressionLevel.Optimal)
                     .Open();
-                entry.Write(new UTF8Encoding(false).GetBytes(file.Text));
+                entry.Write(WithoutMark.GetBytes(file.Text));
             }
         }
         return stream.ToArray();

@@ -4,7 +4,8 @@ using Motif.Suite;
 namespace Motif.Memory.App;
 
 /// <summary>
-/// The Web App's one page: the setup choices, then the next steps. All the logic is behind the User port.
+/// The Web App's one page: the setup choices, and saving the memory. All the
+/// logic is behind the User port.
 /// </summary>
 public partial class Shell : IDisposable
 {
@@ -26,17 +27,20 @@ public partial class Shell : IDisposable
 
     private static bool Checked(ChangeEventArgs e) => e.Value is true;
 
-    private static string Plural(int count, string one, string many) => $"{count} {(count == 1 ? one : many)}";
+    private static string Plural(int count, string one, string many) =>
+        $"{count} {(count == 1 ? one : many)}";
 
     private static MarkupString Icon(SavingWay way) =>
         way.Icon == "folder" ? Icons.Folder : Icons.Download;
 
-    private async Task ChooseWhere(SavingWay way) => await Run(() => App.ChooseWhere(way.Name));
+    private async Task ChooseWhere(SavingWay way) =>
+        await Run(() => App.ChooseWhere(way.Name));
 
     private async Task Save(SavingWay way)
     {
         await Run(() => App.Save(way.Name));
-        // The outcome is a sentence to pass on, so the toast offers it to copy and stays until dismissed.
+        // The outcome is a sentence to pass on, so the toast offers it to
+        // copy and stays until dismissed.
         if (App.Saved != SavedMemory.None)
             Toaster.Offer(App.Saved.Title, App.Saved.Steps, App.Saved.Tell);
     }
@@ -63,7 +67,8 @@ public partial class Shell : IDisposable
         }
     }
 
-    // Dragging a stage: the one picked up, and the one it's over. The up and down buttons do the same without a mouse.
+    // Dragging a stage: the one picked up, and the one it's over. The up and
+    // down buttons do the same without a mouse.
     private int? dragged;
     private int? over;
 
@@ -84,7 +89,8 @@ public partial class Shell : IDisposable
     }
 
     /// <summary>
-    /// Marks the stage picked up, and the edge of the stage it's over that it would land beyond. Nothing lands on the pinned stage.
+    /// Marks the stage picked up, and the edge of the stage it's over that it
+    /// would land beyond. Nothing lands on the pinned stage.
     /// </summary>
     private string DragMark(StageChoice stage)
     {
@@ -93,7 +99,9 @@ public partial class Shell : IDisposable
         if (stage.Id == picked) return "dragging";
         if (stage.Id != over) return "";
         var ids = App.Stages.Select(s => s.Id).ToList();
-        return ids.IndexOf(picked) < ids.IndexOf(stage.Id) ? "drop-below" : "drop-above";
+        return ids.IndexOf(picked) < ids.IndexOf(stage.Id)
+            ? "drop-below"
+            : "drop-above";
     }
 
     private void Toggle(string name)

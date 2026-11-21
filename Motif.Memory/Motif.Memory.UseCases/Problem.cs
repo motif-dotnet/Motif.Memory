@@ -6,5 +6,5 @@ namespace Motif.Memory;
 /// </summary>
 public sealed record Problem(string Title, string Text)
 {
-    public static Problem None { get; } = new("", "");
+    public static readonly Problem None = new("", "");
 }

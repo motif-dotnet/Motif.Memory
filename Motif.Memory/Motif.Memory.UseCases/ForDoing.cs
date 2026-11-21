@@ -15,7 +15,8 @@ public interface ForDoing
     void MoveStageDown(int id);
 
     /// <summary>
-    /// The stage takes the other's place, and the stages between shift by one to make room.
+    /// The stage takes the other's place, and the stages between shift by one
+    /// to make room.
     /// </summary>
     void MoveStageTo(int id, int onto);
 
