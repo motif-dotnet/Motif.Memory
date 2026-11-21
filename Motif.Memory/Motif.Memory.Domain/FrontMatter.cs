@@ -37,8 +37,11 @@ public sealed class FrontMatter
         var end = text.IndexOf("\n---\n", 3, StringComparison.Ordinal);
         if (end < 0) return (None, text);
 
+        // An empty front matter's closing line overlaps the opening one's
+        // line break, so there's nothing between them.
+        var inside = end > 3 ? text[4..end] : "";
         var values = new Dictionary<string, string>();
-        foreach (var line in text[4..end].Split('\n'))
+        foreach (var line in inside.Split('\n'))
         {
             var colon = line.IndexOf(':');
             if (colon > 0) values[line[..colon].Trim()] = line[(colon + 1)..].Trim();

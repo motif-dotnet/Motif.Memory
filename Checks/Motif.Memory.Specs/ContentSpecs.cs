@@ -53,6 +53,15 @@ public class ContentSpecs
     }
 
     [Fact]
+    public void A_note_with_empty_front_matter_reads_as_having_none()
+    {
+        var note = Of("---\n---\nHello.\n").Notes.Single();
+
+        note.Facts.IsEmpty.Should().BeTrue();
+        note.Body.Should().Be("Hello.\n");
+    }
+
+    [Fact]
     public void A_doc_named_in_front_matter_with_no_bullet_is_a_content_error()
     {
         new Content([new ContentFile("Roles/Someone.md", "---\ncore: false\nwrites: [PROGRESS.md, NOTES.md]\nreads: []\n---\nJob\n")]).Problems
