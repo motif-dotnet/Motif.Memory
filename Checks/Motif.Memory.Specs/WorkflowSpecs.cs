@@ -1,7 +1,8 @@
 namespace Motif.Memory.Specs;
 
 /// <summary>
-/// The Developer's order for the workflow's stages, and the warnings beside them.
+/// The Developer's order for the workflow's stages, and the warnings beside
+/// them.
 /// </summary>
 public class WorkflowSpecs
 {
@@ -12,7 +13,8 @@ public class WorkflowSpecs
 
         f.Move("Code Reviewer", -4);
 
-        f.StageNames.Take(2).Should().Equal("Code Reviewer", "Feature Implementor");
+        f.StageNames.Take(2)
+            .Should().Equal("Code Reviewer", "Feature Implementor");
         var steps = Fixture.Steps(f.Write());
         steps[0].Should().StartWith("1. [Code Reviewer]");
         steps[1].Should().StartWith("2. [Feature Implementor]");
@@ -25,11 +27,12 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Tasks.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[0]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[0]).Id);
 
-        f.StageNames.Take(4).Should().Equal(before[3], before[0], before[1], before[2]);
+        f.StageNames.Take(4)
+            .Should().Equal(before[3], before[0], before[1], before[2]);
 
-        f.Tasks.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[2]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[2]).Id);
 
         f.StageNames.Should().Equal(before);
     }
@@ -40,7 +43,7 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Tasks.MoveStageTo(f.Stage(before[2]).Id, f.Stage(before[2]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[2]).Id, f.Stage(before[2]).Id);
 
         f.StageNames.Should().Equal(before);
     }
@@ -50,9 +53,10 @@ public class WorkflowSpecs
     {
         var f = new Fixture();
 
-        var stages = f.Queries.Stages;
+        var stages = f.Seeing.Stages;
 
-        stages[^1].Should().Match<StageChoice>(s => s.IsUsers && s.Pinned && !s.CanMoveUp && !s.CanMoveDown);
+        stages[^1].Should().Match<StageChoice>(
+            s => s.IsUsers && s.Pinned && !s.CanMoveUp && !s.CanMoveDown);
         stages[^2].CanMoveDown.Should().BeFalse();
         stages.SkipLast(1).Should().OnlyContain(s => !s.Pinned);
     }
@@ -62,12 +66,12 @@ public class WorkflowSpecs
     {
         var f = new Fixture();
         var before = f.StageNames;
-        var pinned = f.Queries.Stages[^1].Id;
+        var pinned = f.Seeing.Stages[^1].Id;
 
-        f.Tasks.MoveStageUp(pinned);
-        f.Tasks.MoveStageTo(pinned, f.Queries.Stages[0].Id);
-        f.Tasks.MoveStageDown(f.Queries.Stages[^2].Id);
-        f.Tasks.MoveStageTo(f.Queries.Stages[0].Id, pinned);
+        f.Doing.MoveStageUp(pinned);
+        f.Doing.MoveStageTo(pinned, f.Seeing.Stages[0].Id);
+        f.Doing.MoveStageDown(f.Seeing.Stages[^2].Id);
+        f.Doing.MoveStageTo(f.Seeing.Stages[0].Id, pinned);
 
         f.StageNames.Should().Equal(before);
     }
@@ -78,10 +82,10 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Tasks.MoveStageTo(f.Queries.Stages[0].Id, f.Queries.Stages[^2].Id);
+        f.Doing.MoveStageTo(f.Seeing.Stages[0].Id, f.Seeing.Stages[^2].Id);
 
         f.StageNames[^2].Should().Be(before[0]);
-        f.Queries.Stages[^1].Pinned.Should().BeTrue();
+        f.Seeing.Stages[^1].Pinned.Should().BeTrue();
     }
 
     [Fact]
@@ -90,8 +94,8 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Tasks.MoveStageUp(f.Queries.Stages[0].Id);
-        f.Tasks.MoveStageDown(f.Queries.Stages[^1].Id);
+        f.Doing.MoveStageUp(f.Seeing.Stages[0].Id);
+        f.Doing.MoveStageDown(f.Seeing.Stages[^1].Id);
 
         f.StageNames.Should().Equal(before);
     }
@@ -103,8 +107,10 @@ public class WorkflowSpecs
 
         f.Move("Check Writer", -1);
 
-        f.Stage("Check Writer").Warning.Should().Be("Reads the behaviour checklist, which no earlier stage writes.");
-        f.Queries.Stages.Where(s => s.Name != "Check Writer").Should().OnlyContain(s => s.Warning == "");
+        f.Stage("Check Writer").Warning.Should().Be(
+            "Reads the behaviour checklist, which no earlier stage writes.");
+        f.Seeing.Stages.Where(s => s.Name != "Check Writer")
+            .Should().OnlyContain(s => s.Warning == "");
 
         f.Move("Check Writer", 1);
 
@@ -116,10 +122,11 @@ public class WorkflowSpecs
     {
         var f = new Fixture();
 
-        f.Tasks.TickRole("Behaviour Documenter", false);
-        f.Tasks.TickRole("Bug Fixer", false);
+        f.Doing.TickRole("Behaviour Documenter", false);
+        f.Doing.TickRole("Bug Fixer", false);
 
-        f.Queries.Stages.Where(s => s.Warning != "").Select(s => s.Name).Should().Equal("Check Writer", "Code Tidier");
+        f.Seeing.Stages.Where(s => s.Warning != "").Select(s => s.Name)
+            .Should().Equal("Check Writer", "Code Tidier");
     }
 
     [Fact]
@@ -128,9 +135,9 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Tasks.TickRole("Code Reviewer", false);
+        f.Doing.TickRole("Code Reviewer", false);
         f.StageNames.Should().NotContain("Code Reviewer");
-        f.Tasks.TickRole("Code Reviewer", true);
+        f.Doing.TickRole("Code Reviewer", true);
 
         f.StageNames.Should().Equal(before);
     }
@@ -139,13 +146,13 @@ public class WorkflowSpecs
     public void A_memory_with_no_role_with_a_stage_says_why_it_has_no_workflow()
     {
         var f = new Fixture();
-        f.Queries.WhyNoWorkflow.Should().BeEmpty();
+        f.Seeing.WhyNoWorkflow.Should().BeEmpty();
 
-        foreach (var role in f.Queries.Roles.Select(r => r.Name).ToList())
-            f.Tasks.TickRole(role, false);
+        foreach (var role in f.Seeing.Roles.Select(r => r.Name).ToList())
+            f.Doing.TickRole(role, false);
 
-        f.Queries.Stages.Should().OnlyContain(s => s.IsUsers);
-        f.Queries.WhyNoWorkflow.Should().Be(
+        f.Seeing.Stages.Should().OnlyContain(s => s.IsUsers);
+        f.Seeing.WhyNoWorkflow.Should().Be(
             "No role with a stage is ticked, so the memory has no workflow.");
     }
 }

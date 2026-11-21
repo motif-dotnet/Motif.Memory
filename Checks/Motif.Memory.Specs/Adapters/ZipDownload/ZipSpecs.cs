@@ -3,8 +3,8 @@ using System.IO.Compression;
 namespace Motif.Memory.Specs;
 
 /// <summary>
-/// The zip adapter's zip: what other tools see when they open it, which the behaviour specs
-/// don't, since they read it back as text.
+/// The zip adapter's zip: what other tools see when they open it, which the
+/// behaviour specs don't, since they read it back as text.
 /// </summary>
 public class ZipSpecs
 {
@@ -13,7 +13,7 @@ public class ZipSpecs
     {
         var f = new Fixture();
 
-        await f.Tasks.Save("Zip");
+        await f.Doing.Save("Zip");
 
         using var zip = new ZipArchive(new MemoryStream(f.Download.SavedBytes));
         var start = zip.GetEntry("Start here.md")!;
@@ -21,6 +21,8 @@ public class ZipSpecs
         start.Open().CopyTo(bytes);
         bytes.ToArray().Take(3).Should().NotEqual([0xEF, 0xBB, 0xBF]);
         zip.Entries.Should().Contain(e => e.FullName.StartsWith("Roles/"));
-        zip.Entries.Should().NotContain(e => e.FullName.StartsWith("/") || e.FullName.StartsWith("agent-memory/"));
+        zip.Entries.Should().NotContain(e =>
+            e.FullName.StartsWith("/") ||
+            e.FullName.StartsWith("agent-memory/"));
     }
 }

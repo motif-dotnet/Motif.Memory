@@ -31,7 +31,7 @@
     <ProjectReference Include="..\Motif.Memory.Fakes\Motif.Memory.Fakes.csproj" />
     <!-- Many specs are about the real content, so they read it through the real adapter (design.md). -->
     <ProjectReference Include="..\..\Adapters\Motif.Memory.ForReadingTheContent\Motif.Memory.ForReadingTheContent.csproj" />
-    <!-- Specs run the real Browser Files adapter, over a fake Fitting. -->
+    <!-- Specs run the real For saving the memory adapters, over fake Fittings. -->
     <ProjectReference Include="..\..\Adapters\Motif.Memory.ForSavingTheMemory\Motif.Memory.ForSavingTheMemory.csproj" />
   </ItemGroup>
 
