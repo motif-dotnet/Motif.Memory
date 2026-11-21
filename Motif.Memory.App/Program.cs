@@ -18,7 +18,7 @@ builder.Services.AddSingleton<Download, JsInteropDownload>();
 builder.Services.AddSingleton<ForSavingTheMemory, ForSavingTheMemoryViaFolder>();
 builder.Services.AddSingleton<ForSavingTheMemory, ForSavingTheMemoryViaZipDownload>();
 builder.Services.AddSingleton(sp => new MotifMemoryApplication(
-    new BundledContentMemoryContent(),
+    new ForReadingTheContentViaBundledContent(),
     sp.GetServices<ForSavingTheMemory>()));
 builder.Services.AddSingleton<Browser>();
 builder.Services.AddSingleton<Toaster>();

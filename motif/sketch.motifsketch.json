@@ -111,7 +111,7 @@
       },
       {
         "id": "4d3e0c03",
-        "name": "Memory Content",
+        "name": "For reading the content",
         "description": "Reads the role and pack texts the memory is made from",
         "side": "driven",
         "isUser": false,
@@ -126,7 +126,7 @@
           },
           {
             "id": "4d3e0d06",
-            "name": "Fake Memory Content",
+            "name": "Fake for reading the content",
             "kind": "fake",
             "sources": []
           }

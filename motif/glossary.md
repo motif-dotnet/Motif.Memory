@@ -73,6 +73,17 @@ The thin part of an adapter that touches the outside world. Each member is one c
 - **In code:** `JsInteropFolder`, `JsInteropDownload`, `FakeFolder`, `FakeDownload`
 - **See also:** [Seam](#seam)
 
+## For reading the content
+
+The driven port that reads the role and pack texts the memory is made from. Its real adapter reads the Markdown in `Content/`, embedded in the app.
+
+- **Kind:** port
+- **Avoid:** Memory Content (its old name, which named what it reads rather than what it's for); templates, resources
+- **In code:** `ForReadingTheContent`; real adapter `ForReadingTheContentViaBundledContent`, its own Fitting, faked by `FakeForReadingTheContent`
+- **Status:** proposed
+- **Sketch:** `4d3e0c03`
+- **See also:** [Catalogue](#catalogue), [Pack](#pack)
+
 ## For saving the memory
 
 The port for one way of saving the starter memory's Markdown files, such as into a folder or as a zip. Each way has two steps, choosing where, then saving, and its own words for both. The app offers each way the browser can use, in the order registered, and the first is the default.
@@ -119,17 +130,6 @@ The core role that looks after the memory, and how lessons find their way in. It
 - **Avoid:** curator, librarian
 - **Status:** proposed
 - **See also:** [Core](#core), [Role](#role)
-
-## Memory Content
-
-The driven port that reads the role and pack texts the memory is made from. Its real adapter reads the Markdown in `Content/`, embedded in the app.
-
-- **Kind:** port
-- **Avoid:** templates, resources
-- **In code:** `MemoryContent`; real adapter `BundledContentMemoryContent`
-- **Status:** proposed
-- **Sketch:** `4d3e0c03`
-- **See also:** [Catalogue](#catalogue), [Pack](#pack)
 
 ## Memory Editor
 
@@ -259,7 +259,7 @@ The memory's one-off note, `Set up.md`, that the Developer points their agent at
 
 - **Kind:** domain concept
 - **Avoid:** next steps, install script, bootstrap
-- **In code:** `Content.SetupNote`, `UserQueries.SetupNote`
+- **In code:** `Content.SetupNote`, `ForSeeing.SetupNote`
 - **Status:** proposed
 - **See also:** [Pointer](#pointer), [Setup](#setup)
 
@@ -300,7 +300,7 @@ A mark in `Content/`, written as an HTML comment, around text that's written onl
 - **Avoid:** marker, directive, placeholder
 - **In code:** `Tags`
 - **Status:** proposed
-- **See also:** [Memory Content](#memory-content), [Setup](#setup)
+- **See also:** [For reading the content](#for-reading-the-content), [Setup](#setup)
 
 ## Temporary doc
 
@@ -317,8 +317,8 @@ A working note for one piece of work, such as the progress doc or the bug list, 
 The driving port people use. Its real adapter is the Web App: the setup page and the catalogue.
 
 - **Kind:** port
-- **Avoid:** user, for a person (say Developer)
-- **In code:** `UserTasks`, `UserQueries`
+- **Avoid:** user, for a person (say Developer); `UserTasks`, `UserQueries` (the halves' old names)
+- **In code:** `ForDoing` (the commands), `ForSeeing` (the queries)
 - **Status:** proposed
 - **Sketch:** `4d3e0c01`
 

@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.UseCases", "Mo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Adapters", "Adapters", "{09DF2EE5-5FE7-3EC7-59CB-CAD7E0928979}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.MemoryContent", "Adapters\Motif.Memory.MemoryContent\Motif.Memory.MemoryContent.csproj", "{EA1395C0-3E4F-4899-A7C8-FBECDF94D050}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.ForReadingTheContent", "Adapters\Motif.Memory.ForReadingTheContent\Motif.Memory.ForReadingTheContent.csproj", "{EA1395C0-3E4F-4899-A7C8-FBECDF94D050}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motif.Memory.ForSavingTheMemory", "Adapters\Motif.Memory.ForSavingTheMemory\Motif.Memory.ForSavingTheMemory.csproj", "{48C855A8-44F9-4C1E-B7CC-CEC254BAA662}"
 EndProject

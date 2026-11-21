@@ -11,7 +11,7 @@ namespace Motif.Memory.Specs;
 /// </summary>
 public sealed class Fixture
 {
-    public static readonly BundledContentMemoryContent RealContent = new();
+    public static readonly ForReadingTheContentViaBundledContent RealContent = new();
 
     public FakeFolder Browser { get; }
 
@@ -19,19 +19,19 @@ public sealed class Fixture
 
     public MotifMemoryApplication App { get; }
 
-    public UserTasks Tasks => App;
+    public ForDoing Tasks => App;
 
-    public UserQueries Queries => App;
+    public ForSeeing Queries => App;
 
     public Fixture() : this(RealContent)
     {
     }
 
-    public Fixture(MemoryContent content) : this(content, new FakeFolder())
+    public Fixture(ForReadingTheContent content) : this(content, new FakeFolder())
     {
     }
 
-    private Fixture(MemoryContent content, FakeFolder browser)
+    private Fixture(ForReadingTheContent content, FakeFolder browser)
     {
         Browser = browser;
         App = new MotifMemoryApplication(content,
@@ -43,7 +43,7 @@ public sealed class Fixture
     }
 
     public static Fixture Of(params (string Path, string Text)[] files) =>
-        new(new FakeMemoryContent(files.Select(f => new ContentFile(f.Path, f.Text)).ToArray()));
+        new(new FakeForReadingTheContent(files.Select(f => new ContentFile(f.Path, f.Text)).ToArray()));
 
     public static Fixture WithNoFolderPicker() =>
         new(RealContent, new FakeFolder { CanChooseFolder = false });

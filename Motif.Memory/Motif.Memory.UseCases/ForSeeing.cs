@@ -3,7 +3,7 @@ namespace Motif.Memory;
 /// <summary>
 /// The User port's queries: everything the setup page shows.
 /// </summary>
-public interface UserQueries
+public interface ForSeeing
 {
     IReadOnlyList<RoleChoice> Roles { get; }
 

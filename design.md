@@ -124,7 +124,7 @@ All in `Motif.Memory.UseCases`, filling the plan's empty interfaces. These are t
 /// </summary>
 public sealed record ContentFile(string Path, string Text);
 
-public interface MemoryContent
+public interface ForReadingTheContent
 {
     IReadOnlyList<ContentFile> Files { get; }
 }
@@ -151,7 +151,7 @@ public interface ForSavingTheMemory
 
 `Unavailable` says why the browser can't save this way, or nothing when it can. `SavingWay` is what the user sees of the way as it stands: its name, its icon, what saving this way means, its labels for choosing and saving, where was chosen, and what to do before it's ready, if anything; it's ready when there's nothing to do first. `Choosing` says chosen, kept (the picker was closed), or refused (with a title and the problem). `Saving` says saved (with what happened and any steps before telling the agent), or refused (with the problem).
 
-**User port.** `UserQueries`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice and the choices' labels and lines, the ways of saving offered (and why any aren't), what the last save did and what to tell the agent, the setup note's name, and the problem to show, with its title. `UserTasks`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, choose where to save a way, save it, dismiss the problem.
+**User port.** `ForSeeing`: the roles (name, its start-note line, ticked, core), the stages in order (each with its warning, or none), the packs and their guidelines (ticked), the committing choice and the choices' labels and lines, the ways of saving offered (and why any aren't), what the last save did and what to tell the agent, the setup note's name, and the problem to show, with its title. `ForDoing`: tick a role, move a stage up or down or to another's place, tick a pack or a guideline, choose committing, choose where to save a way, save it, dismiss the problem.
 
 What a UI in another technology would have to write again is behind the User port, where specs reach it: the wording, labels and outcomes. The page keeps only layout, menus, theme, toasts, busy and drag marks (#51).
 
@@ -161,11 +161,11 @@ The rules that make a memory from the choices and the content (front matter, tag
 
 | Adapter | Project | How |
 |---|---|---|
-| Bundled Content | `Motif.Memory.MemoryContent` | Embeds `../../Content/**` as resources, dot-files too, with each file's path kept as its logical name (#40) |
+| Bundled Content | `Motif.Memory.ForReadingTheContent` | Embeds `../../Content/**` as resources, dot-files too, with each file's path kept as its logical name (#40) |
 | Folder | `Motif.Memory.ForSavingTheMemory` | Its rules (what counts as empty, writing a folder once, the failures' wording) are C#. It reaches the browser through the Folder Seam (`Folder`), whose real Fitting, `JsInteropFolder`, makes one call to `wwwroot/files.js` per member |
 | Zip Download | `Motif.Memory.ForSavingTheMemory` | Makes the zip in C#, and has the browser save it through the Download Seam (`Download`), whose real Fitting, `JsInteropDownload`, calls `wwwroot/download.js` |
 | Fake Folder, Fake Download | `Motif.Memory.Fakes` | The fake Fittings, so specs run the real adapters. The picker hands back a folder held in memory, or fails as the Folder Seam's own kinds (declined, refused, failed), which the real Fitting maps from the browser's error names; writing can fail; there can be no folder picker. The download keeps the last one |
-| Fake Memory Content | `Motif.Memory.Fakes` | Content a spec makes up, for format rules the real content doesn't use |
+| Fake for reading the content | `Motif.Memory.Fakes` | Content a spec makes up, for format rules the real content doesn't use |
 
 The Web App is the composition root (`Program.cs`), so it alone references the real adapters, as Motif Glossary's does. It registers each way of saving as the port, folder then zip, and that order is the order offered (#50). That's one reference more than the plan's §3, which covers the stubs.
 
@@ -180,7 +180,7 @@ Built on the Motif web kit, as Motif Glossary is: copy `scripts/sync-suite.sh` f
 
 ## Specs
 
-Through the User port, with the real Bundled Content where the real content is the point and Fake Memory Content for the format's own rules. Saving goes through the real adapters, folder then zip, over the fake Fittings. The behaviours to cover:
+Through the User port, with the real Bundled Content where the real content is the point and the fake for reading the content for the format's own rules. Saving goes through the real adapters, folder then zip, over the fake Fittings. The behaviours to cover:
 
 1. The defaults are as in the table above.
 2. With everything ticked, every file in `Content/` is written, with no front matter and no tags left in any of them.

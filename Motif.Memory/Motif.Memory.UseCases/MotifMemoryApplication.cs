@@ -5,7 +5,7 @@ namespace Motif.Memory;
 /// Call <see cref="Start"/> once at startup, so the ways of saving this
 /// browser can use are known before the page shows.
 /// </summary>
-public sealed class MotifMemoryApplication : UserTasks, UserQueries
+public sealed class MotifMemoryApplication : ForDoing, ForSeeing
 {
     private readonly IReadOnlyList<ForSavingTheMemory> ways;
     private readonly Setup setup;
@@ -14,7 +14,7 @@ public sealed class MotifMemoryApplication : UserTasks, UserQueries
     /// <param name="ways">Offered in this order, where the browser can.
     /// </param>
     public MotifMemoryApplication(
-        MemoryContent content, IEnumerable<ForSavingTheMemory> ways)
+        ForReadingTheContent content, IEnumerable<ForSavingTheMemory> ways)
     {
         this.ways = ways.ToList();
         setup = new Setup(new Content(content.Files));

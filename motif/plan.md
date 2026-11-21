@@ -22,7 +22,7 @@ Motif.Memory.sln
     Motif.Memory.UseCases/
   Adapters/
     Motif.Memory.ForSavingTheMemory/
-    Motif.Memory.MemoryContent/
+    Motif.Memory.ForReadingTheContent/
   Checks/
     Motif.Memory.Fakes/
     Motif.Memory.Specs/
@@ -34,7 +34,7 @@ Motif.Memory.sln
 | `Motif.Memory.Domain` | `Motif.Memory/Motif.Memory.Domain/` | `classlib` | `Motif.Memory` | Domain-specific business rules |
 | `Motif.Memory.UseCases` | `Motif.Memory/Motif.Memory.UseCases/` | `classlib` | `Motif.Memory` | Application rules (use cases) and all port interfaces |
 | `Motif.Memory.ForSavingTheMemory` | `Adapters/Motif.Memory.ForSavingTheMemory/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the For saving the memory port |
-| `Motif.Memory.MemoryContent` | `Adapters/Motif.Memory.MemoryContent/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the Memory Content port |
+| `Motif.Memory.ForReadingTheContent` | `Adapters/Motif.Memory.ForReadingTheContent/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the For reading the content port |
 | `Motif.Memory.Fakes` | `Checks/Motif.Memory.Fakes/` | `classlib` | `Motif.Memory.Fakes` | Fake driven adapters, for specs |
 | `Motif.Memory.Specs` | `Checks/Motif.Memory.Specs/` | `xunit` | `Motif.Memory.Specs` | Specs: the checks on every driving port |
 
@@ -46,7 +46,7 @@ Motif.Memory.sln
 | `Motif.Memory.Domain` | nothing |
 | `Motif.Memory.UseCases` | `Motif.Memory.Domain` |
 | `Motif.Memory.ForSavingTheMemory` | `Motif.Memory.UseCases` |
-| `Motif.Memory.MemoryContent` | `Motif.Memory.UseCases` |
+| `Motif.Memory.ForReadingTheContent` | `Motif.Memory.UseCases` |
 | `Motif.Memory.Fakes` | `Motif.Memory.UseCases`, `Motif.Memory.ForSavingTheMemory` |
 | `Motif.Memory.Specs` | `Motif.Memory.UseCases`, `Motif.Memory.Fakes`, `Motif.Memory.ForSavingTheMemory` |
 
@@ -60,7 +60,7 @@ Rules:
 
 ## 4. Namespaces
 
-- `Motif.Memory.Domain` and `Motif.Memory.UseCases` both use the plain `Motif.Memory` namespace, so the port interfaces are `Motif.Memory.UserTasks` and so on.
+- `Motif.Memory.Domain` and `Motif.Memory.UseCases` both use the plain `Motif.Memory` namespace, so the port interfaces are `Motif.Memory.ForDoing` and so on.
 - Every other project uses the namespace in section 2. Real and simulated adapters share one namespace, and so do the fakes.
 - Folders inside a project don't change its namespace.
 - Set `RootNamespace` in each `.csproj` to its namespace, so new files created in an IDE get it.
@@ -72,34 +72,34 @@ All port interfaces live in `Motif.Memory.UseCases`, namespace `Motif.Memory`, o
 
 ```
 Motif.Memory.UseCases/
-  UserTasks.cs
-  UserQueries.cs
+  ForDoing.cs
+  ForSeeing.cs
   MotifMemoryApplication.cs
   Ports/
     ForSavingTheMemory.cs
-    MemoryContent.cs
+    ForReadingTheContent.cs
 ```
 
 ### User (driving)
 
-The User port: how people (and anything acting for them) use the application. It has two halves, commands and queries.
+The User port: how people (and anything acting for them) use the application. It has two halves: `ForDoing`, the commands, and `ForSeeing`, the queries.
 
-`UserTasks.cs`:
+`ForDoing.cs`:
 
 ```csharp
 namespace Motif.Memory;
 
-public interface UserTasks
+public interface ForDoing
 {
 }
 ```
 
-`UserQueries.cs`:
+`ForSeeing.cs`:
 
 ```csharp
 namespace Motif.Memory;
 
-public interface UserQueries
+public interface ForSeeing
 {
 }
 ```
@@ -118,21 +118,21 @@ public interface ForSavingTheMemory
 }
 ```
 
-### Memory Content (driven)
+### For reading the content (driven)
 
 Reads the role and pack texts the memory is made from
 
-`Ports/MemoryContent.cs`:
+`Ports/ForReadingTheContent.cs`:
 
 ```csharp
 namespace Motif.Memory;
 
-public interface MemoryContent
+public interface ForReadingTheContent
 {
 }
 ```
 
-Also add one stub class, `MotifMemoryApplication` in `Motif.Memory.UseCases` (namespace `Motif.Memory`), implementing the driving interfaces (`UserTasks`, `UserQueries`). It is the application itself; its constructor will later take the driven ports.
+Also add one stub class, `MotifMemoryApplication` in `Motif.Memory.UseCases` (namespace `Motif.Memory`), implementing the driving interfaces (`ForDoing`, `ForSeeing`). It is the application itself; its constructor will later take the driven ports.
 
 ## 6. Adapters
 
@@ -144,8 +144,8 @@ Kinds: **Real** is the production adapter; **Fake** is a simple in-process stand
 | User | Specs | Checks | xUnit | `Motif.Memory.Specs` | - | Added in the sketch |
 | For saving the memory | Folder | Real | Folder picker (JS interop) | `Motif.Memory.ForSavingTheMemory` | `ForSavingTheMemoryViaFolder` | Context diagram: Memory Repo |
 | For saving the memory | Zip Download | Real | Browser download (JS interop) | `Motif.Memory.ForSavingTheMemory` | `ForSavingTheMemoryViaZipDownload` | Added in the sketch |
-| Memory Content | Bundled Content | Real | Embedded resources | `Motif.Memory.MemoryContent` | `MemoryContentViaBundledContent` | Added in the sketch |
-| Memory Content | Fake Memory Content | Fake | - | `Motif.Memory.Fakes` (`MemoryContent/`) | `FakeMemoryContent` | Added in the sketch |
+| For reading the content | Bundled Content | Real | Embedded resources | `Motif.Memory.ForReadingTheContent` | `ForReadingTheContentViaBundledContent` | Added in the sketch |
+| For reading the content | Fake for reading the content | Fake | - | `Motif.Memory.Fakes` (`ForReadingTheContent/`) | `FakeForReadingTheContent` | Added in the sketch |
 
 For each driven adapter, add the stub class named above implementing its port's interface, in its project's namespace and in the folder shown. For example:
 
@@ -202,14 +202,14 @@ Adapter notes:
 - **Specs** (`Motif.Memory.Specs`): Checks that drive the application through the User port, using the fake driven adapters
 - **Folder** (`Motif.Memory.ForSavingTheMemory`): Writes the files into a folder the Developer picks, where the browser has a folder picker. Offered first
 - **Zip Download** (`Motif.Memory.ForSavingTheMemory`): Downloads the files as a zip, in every browser
-- **Bundled Content** (`Motif.Memory.MemoryContent`): Reads the Markdown in Content/, embedded in the adapter as resources
+- **Bundled Content** (`Motif.Memory.ForReadingTheContent`): Reads the Markdown in Content/, embedded in the adapter as resources
 
 ## 7. Fakes and specs
 
-- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake Fitting, and every fake of a port whose adapters are their own Fittings, with a folder per port (`MemoryContent/`, `ForSavingTheMemory/`). The namespace is flat: `Motif.Memory.Fakes`.
+- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake Fitting, and every fake of a port whose adapters are their own Fittings, with a folder per port (`ForReadingTheContent/`, `ForSavingTheMemory/`). The namespace is flat: `Motif.Memory.Fakes`.
 - `Motif.Memory.Specs` (`Checks/Motif.Memory.Specs/`): xUnit. Packages: `Microsoft.NET.Test.Sdk`, `xunit`, `xunit.runner.visualstudio`, `coverlet.collector`, `AwesomeAssertions`. Keep the template's packages and add `AwesomeAssertions`.
   Add one placeholder spec class with a single passing `[Fact]`, so `dotnet test` runs. Specs wire the real adapters over their fake Fittings, and the other fakes, up by hand; there is no composition root yet.
-- The browser adapters (`Motif.Memory.ForSavingTheMemory`, `Motif.Memory.MemoryContent`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
+- The browser adapters (`Motif.Memory.ForSavingTheMemory`, `Motif.Memory.ForReadingTheContent`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
 - Use the latest stable package versions. Use AwesomeAssertions (`.Should()` style) in specs.
 
 ## 8. Not placed

@@ -3,7 +3,7 @@ namespace Motif.Memory.Adapters;
 /// <summary>
 /// Content/, embedded in this assembly as resources, each named by its path in the folder.
 /// </summary>
-public sealed class BundledContentMemoryContent : MemoryContent
+public sealed class ForReadingTheContentViaBundledContent : ForReadingTheContent
 {
     private const string Prefix = "Content/";
 
@@ -11,7 +11,7 @@ public sealed class BundledContentMemoryContent : MemoryContent
 
     private static List<ContentFile> Read()
     {
-        var assembly = typeof(BundledContentMemoryContent).Assembly;
+        var assembly = typeof(ForReadingTheContentViaBundledContent).Assembly;
         return assembly.GetManifestResourceNames()
             .Where(name => name.StartsWith(Prefix, StringComparison.Ordinal))
             .Select(name =>

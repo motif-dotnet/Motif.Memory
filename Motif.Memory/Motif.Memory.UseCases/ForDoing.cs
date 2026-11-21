@@ -3,7 +3,7 @@ namespace Motif.Memory;
 /// <summary>
 /// The User port's commands: the setup choices, and writing the memory out.
 /// </summary>
-public interface UserTasks
+public interface ForDoing
 {
     /// <summary>
     /// Core roles stay ticked.
