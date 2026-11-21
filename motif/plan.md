@@ -21,8 +21,8 @@ Motif.Memory.sln
     Motif.Memory.Domain/
     Motif.Memory.UseCases/
   Adapters/
+    Motif.Memory.ForSavingTheMemory/
     Motif.Memory.MemoryContent/
-    Motif.Memory.MemoryFiles/
   Checks/
     Motif.Memory.Fakes/
     Motif.Memory.Specs/
@@ -33,8 +33,8 @@ Motif.Memory.sln
 | `Motif.Memory.App` | `Motif.Memory.App/` | `blazorwasm` | `Motif.Memory.App` | The app: runnable adapter on the User port |
 | `Motif.Memory.Domain` | `Motif.Memory/Motif.Memory.Domain/` | `classlib` | `Motif.Memory` | Domain-specific business rules |
 | `Motif.Memory.UseCases` | `Motif.Memory/Motif.Memory.UseCases/` | `classlib` | `Motif.Memory` | Application rules (use cases) and all port interfaces |
-| `Motif.Memory.MemoryContent` | `Adapters/Motif.Memory.MemoryContent/` | `classlib` | `Motif.Memory.Adapters` | Adapters on the Memory Content port |
-| `Motif.Memory.MemoryFiles` | `Adapters/Motif.Memory.MemoryFiles/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the Memory Files port |
+| `Motif.Memory.ForSavingTheMemory` | `Adapters/Motif.Memory.ForSavingTheMemory/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the For saving the memory port |
+| `Motif.Memory.MemoryContent` | `Adapters/Motif.Memory.MemoryContent/` | `razorclasslib` | `Motif.Memory.Adapters` | Adapters on the Memory Content port |
 | `Motif.Memory.Fakes` | `Checks/Motif.Memory.Fakes/` | `classlib` | `Motif.Memory.Fakes` | Fake driven adapters, for specs |
 | `Motif.Memory.Specs` | `Checks/Motif.Memory.Specs/` | `xunit` | `Motif.Memory.Specs` | Specs: the checks on every driving port |
 
@@ -45,17 +45,17 @@ Motif.Memory.sln
 | `Motif.Memory.App` | `Motif.Memory.UseCases` |
 | `Motif.Memory.Domain` | nothing |
 | `Motif.Memory.UseCases` | `Motif.Memory.Domain` |
+| `Motif.Memory.ForSavingTheMemory` | `Motif.Memory.UseCases` |
 | `Motif.Memory.MemoryContent` | `Motif.Memory.UseCases` |
-| `Motif.Memory.MemoryFiles` | `Motif.Memory.UseCases` |
-| `Motif.Memory.Fakes` | `Motif.Memory.UseCases` |
-| `Motif.Memory.Specs` | `Motif.Memory.UseCases`, `Motif.Memory.Fakes` |
+| `Motif.Memory.Fakes` | `Motif.Memory.UseCases`, `Motif.Memory.ForSavingTheMemory` |
+| `Motif.Memory.Specs` | `Motif.Memory.UseCases`, `Motif.Memory.Fakes`, `Motif.Memory.ForSavingTheMemory` |
 
 Rules:
 
 - `Motif.Memory.Domain` references nothing.
 - `Motif.Memory.UseCases` references `Motif.Memory.Domain` only.
 - Every adapter project references `Motif.Memory.UseCases` only. **Adapters never reference each other.**
-- The specs project may also reference the fakes it wires up by hand.
+- The fakes project also references the adapter projects whose Seams it fakes, and the specs project references them too, so specs run the real adapters over fake Fittings.
 - These references are the dependency rule. Don't add others.
 
 ## 4. Namespaces
@@ -76,8 +76,8 @@ Motif.Memory.UseCases/
   UserQueries.cs
   MotifMemoryApplication.cs
   Ports/
+    ForSavingTheMemory.cs
     MemoryContent.cs
-    MemoryFiles.cs
 ```
 
 ### User (driving)
@@ -104,16 +104,16 @@ public interface UserQueries
 }
 ```
 
-### Memory Files (driven)
+### For saving the memory (driven)
 
-Writes the starter memory's Markdown files out
+One way of saving the starter memory's Markdown files: choosing where, then saving. The app offers each way the browser can use, in the order registered
 
-`Ports/MemoryFiles.cs`:
+`Ports/ForSavingTheMemory.cs`:
 
 ```csharp
 namespace Motif.Memory;
 
-public interface MemoryFiles
+public interface ForSavingTheMemory
 {
 }
 ```
@@ -142,9 +142,9 @@ Kinds: **Real** is the production adapter; **Fake** is a simple in-process stand
 |---|---|---|---|---|---|---|
 | User | Web App | Real | Blazor WebAssembly UI | `Motif.Memory.App` | - | Context diagram: Developer |
 | User | Specs | Checks | xUnit | `Motif.Memory.Specs` | - | Added in the sketch |
-| Memory Files | Browser Files | Real | Folder picker or zip download (JS interop) | `Motif.Memory.MemoryFiles` | `BrowserFilesMemoryFiles` | Context diagram: Memory Repo |
-| Memory Files | Fake Memory Files | Fake | - | `Motif.Memory.Fakes` (`MemoryFiles/`) | `FakeMemoryFiles` | Added in the sketch |
-| Memory Content | Bundled Content | Real | Static files over HTTP (HttpClient) | `Motif.Memory.MemoryContent` | `BundledContentMemoryContent` | Added in the sketch |
+| For saving the memory | Folder | Real | Folder picker (JS interop) | `Motif.Memory.ForSavingTheMemory` | `ForSavingTheMemoryViaFolder` | Context diagram: Memory Repo |
+| For saving the memory | Zip Download | Real | Browser download (JS interop) | `Motif.Memory.ForSavingTheMemory` | `ForSavingTheMemoryViaZipDownload` | Added in the sketch |
+| Memory Content | Bundled Content | Real | Embedded resources | `Motif.Memory.MemoryContent` | `MemoryContentViaBundledContent` | Added in the sketch |
 | Memory Content | Fake Memory Content | Fake | - | `Motif.Memory.Fakes` (`MemoryContent/`) | `FakeMemoryContent` | Added in the sketch |
 
 For each driven adapter, add the stub class named above implementing its port's interface, in its project's namespace and in the folder shown. For example:
@@ -152,7 +152,44 @@ For each driven adapter, add the stub class named above implementing its port's 
 ```csharp
 namespace Motif.Memory.Adapters;
 
-public sealed class BrowserFilesMemoryFiles : MemoryFiles
+public sealed class ForSavingTheMemoryViaFolder : ForSavingTheMemory
+{
+}
+```
+
+On For saving the memory, the real adapters are offered in this order: Folder, then Zip Download. Each is registered as the port, in that order, and the first available is the default.
+
+Deep adapters: an adapter with a Seam keeps its own rules, and reaches the outside world through the Seam, an interface it owns. The Seam's Fitting makes one outside call per member, with no branches worth testing. Specs run the real adapter over its fake Fitting, so its port has no fake of its own. The Seam and its real Fitting go in the adapter's project and namespace; the fake Fitting goes in the fakes project, in the port's folder.
+
+| Port | Adapters | Seam | Real Fitting | Fake Fitting |
+|---|---|---|---|---|
+| For saving the memory | Folder | `Folder` | `JsInteropFolder` | `FakeFolder` (`ForSavingTheMemory/`) |
+| For saving the memory | Zip Download | `Download` | `JsInteropDownload` | `FakeDownload` (`ForSavingTheMemory/`) |
+
+For each Seam, add the empty interface, its real Fitting and its fake Fitting. Each adapter with a Seam takes it in its one constructor. For example:
+
+```csharp
+namespace Motif.Memory.Adapters;
+
+public interface Folder
+{
+}
+
+public sealed class JsInteropFolder : Folder
+{
+}
+
+public sealed class ForSavingTheMemoryViaFolder(Folder folder) : ForSavingTheMemory
+{
+}
+```
+
+```csharp
+using Motif.Memory.Adapters;
+
+namespace Motif.Memory.Fakes;
+
+public sealed class FakeFolder : Folder
 {
 }
 ```
@@ -163,15 +200,16 @@ Adapter notes:
 
 - **Web App** (`Motif.Memory.App`): The setup page and the catalogue: pick roles, order the workflow stages, pick guidelines from packs, and write the memory out; or view and download a single role or pack
 - **Specs** (`Motif.Memory.Specs`): Checks that drive the application through the User port, using the fake driven adapters
-- **Browser Files** (`Motif.Memory.MemoryFiles`): Writes the files into a folder the Developer picks, or downloads them as a zip where the browser can't
-- **Bundled Content** (`Motif.Memory.MemoryContent`): Reads the Markdown in Content/, shipped with the app as static files
+- **Folder** (`Motif.Memory.ForSavingTheMemory`): Writes the files into a folder the Developer picks, where the browser has a folder picker. Offered first
+- **Zip Download** (`Motif.Memory.ForSavingTheMemory`): Downloads the files as a zip, in every browser
+- **Bundled Content** (`Motif.Memory.MemoryContent`): Reads the Markdown in Content/, embedded in the adapter as resources
 
 ## 7. Fakes and specs
 
-- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake driven adapter, with a folder per port (`MemoryFiles/`, `MemoryContent/`). The namespace is flat: `Motif.Memory.Fakes`.
+- `Motif.Memory.Fakes` (`Checks/Motif.Memory.Fakes/`): every fake Fitting, and every fake of a port whose adapters are their own Fittings, with a folder per port (`MemoryContent/`, `ForSavingTheMemory/`). The namespace is flat: `Motif.Memory.Fakes`.
 - `Motif.Memory.Specs` (`Checks/Motif.Memory.Specs/`): xUnit. Packages: `Microsoft.NET.Test.Sdk`, `xunit`, `xunit.runner.visualstudio`, `coverlet.collector`, `AwesomeAssertions`. Keep the template's packages and add `AwesomeAssertions`.
-  Add one placeholder spec class with a single passing `[Fact]`, so `dotnet test` runs. Specs wire the fake adapters up by hand; there is no composition root yet.
-- The browser adapters (`Motif.Memory.MemoryFiles`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
+  Add one placeholder spec class with a single passing `[Fact]`, so `dotnet test` runs. Specs wire the real adapters over their fake Fittings, and the other fakes, up by hand; there is no composition root yet.
+- The browser adapters (`Motif.Memory.ForSavingTheMemory`, `Motif.Memory.MemoryContent`) also take `Microsoft.JSInterop`: each reaches the browser through a small JS module it ships as a static web asset.
 - Use the latest stable package versions. Use AwesomeAssertions (`.Should()` style) in specs.
 
 ## 8. Not placed
@@ -202,7 +240,7 @@ Instructions for the coding agent:
    dotnet_naming_style.pascal_case.capitalization = pascal_case
    ```
 
-6. Add the port interfaces and the application stub from section 5, and the adapter stub classes from section 6.
+6. Add the port interfaces and the application stub from section 5, and the adapter stub classes, and each Seam with its Fittings, from section 6.
 7. Add the placeholder spec from section 7.
 8. Check that `dotnet build` and `dotnet test` both succeed.
 
@@ -210,6 +248,6 @@ Ground rules:
 
 - **Stubs only.** No functionality, no interface members, no wiring.
 - **No composition root** (no host project, no dependency injection setup) in this version.
-- **No `I` prefix** on interfaces. Implementations carry the meaningful extra (`FileSystemStorage`), never `Impl`.
+- **No `I` prefix** on interfaces. An adapter is named for its port, then its way (`ForStoringViaFileSystem`); other implementations carry the meaningful extra (`FileSystemFolder`), never `Impl`.
 - **Two-letter acronyms stay in capitals** in code names (`IndexedDB`, `UI`).
 - Don't add projects, references or packages the plan doesn't list.

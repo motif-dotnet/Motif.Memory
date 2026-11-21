@@ -93,6 +93,7 @@
             "technology": "Folder picker (JS interop)",
             "description": "Writes the files into a folder the Developer picks, where the browser has a folder picker. Offered first",
             "kind": "real",
+            "seam": "Folder",
             "sources": [
               "4d3e0a03"
             ]
@@ -103,12 +104,7 @@
             "technology": "Browser download (JS interop)",
             "description": "Downloads the files as a zip, in every browser",
             "kind": "real",
-            "sources": []
-          },
-          {
-            "id": "4d3e0d04",
-            "name": "Fake Browser",
-            "kind": "fake",
+            "seam": "Download",
             "sources": []
           }
         ]
