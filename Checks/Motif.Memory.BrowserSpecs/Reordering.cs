@@ -18,7 +18,7 @@ public sealed class Reordering(Site site)
         await SetupPage.Stage(page, before[0])
             .DragToAsync(SetupPage.Stage(page, before[2]));
 
-        await Assertions.Expect(page.Locator("ol.stages > li .who"))
+        await Assertions.Expect(SetupPage.StageNames(page))
             .ToHaveTextAsync(
                 [before[1], before[2], before[0], .. before.Skip(3)]);
     }
@@ -35,7 +35,6 @@ public sealed class Reordering(Site site)
         await picked.HoverAsync();
         await page.Mouse.DownAsync();
         await over.HoverAsync();
-        await over.HoverAsync(new() { Position = new() { X = 20, Y = 10 } });
 
         await Assertions.Expect(picked).ToHaveClassAsync(
             new System.Text.RegularExpressions.Regex(@"\bdragging\b"));

@@ -16,13 +16,13 @@ public sealed class TheToast(Site site)
         var page = await site.Open(profile);
         await SetupPage.DownloadZip(page);
         var toast = SetupPage.Toast(page);
-        var sentence = await toast.Locator(".copy").InnerTextAsync();
+        var tellTheAgent = await toast.Locator(".copy").InnerTextAsync();
 
         await toast.GetByRole(AriaRole.Button, new() { Name = "Copy" })
             .ClickAsync();
 
         await Assertions.Expect(toast).ToContainTextAsync("Copied");
         (await page.EvaluateAsync<string>("navigator.clipboard.readText()"))
-            .Should().Be(sentence);
+            .Should().Be(tellTheAgent);
     }
 }

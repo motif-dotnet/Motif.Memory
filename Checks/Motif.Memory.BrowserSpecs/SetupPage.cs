@@ -28,7 +28,13 @@ public static class SetupPage
 
     /// <summary>The names of the workflow's stages, in order.</summary>
     public static Task<IReadOnlyList<string>> Stages(IPage page) =>
-        page.Locator("ol.stages > li .who").AllInnerTextsAsync();
+        StageNames(page).AllInnerTextsAsync();
+
+    /// <summary>
+    /// Where the stages' names show, to wait for them to read a certain way.
+    /// </summary>
+    public static ILocator StageNames(IPage page) =>
+        page.Locator("ol.stages > li .who");
 
     public static ILocator Stage(IPage page, string name) =>
         page.Locator("ol.stages > li").Filter(new()

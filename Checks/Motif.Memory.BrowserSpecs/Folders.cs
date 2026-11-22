@@ -12,8 +12,8 @@ namespace Motif.Memory.BrowserSpecs;
 public static class Folders
 {
     /// <summary>
-    /// Run before the app starts. With nothing said, a pick hands back an
-    /// empty folder named "memory".
+    /// Run before the app starts. With nothing said, a pick hands back the
+    /// folder named "memory", made empty if it isn't there yet.
     /// </summary>
     public const string Picker = """
         (() => {
@@ -86,8 +86,7 @@ public static class Folders
                 }
               };
               const root = await navigator.storage.getDirectory();
-              const top = await root.getDirectoryHandle(
-                folder, { create: true });
+              const top = await root.getDirectoryHandle(folder);
               await walk(top, "");
               return files;
             }
