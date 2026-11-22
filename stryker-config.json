@@ -1,8 +1,8 @@
 {
   "stryker-config": {
-    "project": "Motif.Memory.ForSavingTheMemory.csproj",
-    "test-projects": [
-      "Checks/Motif.Memory.Specs/Motif.Memory.Specs.csproj"
+    "solution": "Motif.Memory.Specs.slnx",
+    "mutate": [
+      "!**/Motif.Memory.Fakes/**"
     ],
     "reporters": [
       "progress",

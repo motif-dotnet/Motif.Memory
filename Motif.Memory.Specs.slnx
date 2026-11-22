@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Motif.Memory/Motif.Memory.Domain/Motif.Memory.Domain.csproj" />
+  <Project Path="Motif.Memory/Motif.Memory.UseCases/Motif.Memory.UseCases.csproj" />
+  <Project Path="Adapters/Motif.Memory.ForReadingTheContent/Motif.Memory.ForReadingTheContent.csproj" />
+  <Project Path="Adapters/Motif.Memory.ForSavingTheMemory/Motif.Memory.ForSavingTheMemory.csproj" />
+  <Project Path="Checks/Motif.Memory.Fakes/Motif.Memory.Fakes.csproj" />
+  <Project Path="Checks/Motif.Memory.Specs/Motif.Memory.Specs.csproj" />
+</Solution>
