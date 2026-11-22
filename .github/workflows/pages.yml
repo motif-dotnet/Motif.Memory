@@ -27,10 +27,27 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Test
+      - name: Build
+        run: dotnet build Motif.Memory.sln -c Release
+
+      # The specs first: they take seconds, so a broken one fails the run before the browser specs start.
+      - name: Specs
         run: >
-          dotnet test Motif.Memory.sln -c Release
+          dotnet test Checks/Motif.Memory.Specs -c Release --no-build
           --logger "trx;LogFileName=specs.trx" --results-directory results
+
+      # Not --no-build: without its build, publish leaves index.html's fingerprint placeholders unfilled.
+      - name: Publish
+        run: dotnet publish Motif.Memory.App -c Release -o publish
+
+      # The browser specs serve what was just published (MOTIF_SITE), so the app is published once, and
+      # they use the Edge the runner image comes with.
+      - name: Browser specs
+        env:
+          MOTIF_SITE: ${{ github.workspace }}/publish
+        run: >
+          dotnet test Checks/Motif.Memory.BrowserSpecs -c Release --no-build
+          --logger "trx;LogFileName=browser-specs.trx" --results-directory results
 
       # How many specs there are and how long they take, on the run's page, to keep an eye on as they grow.
       - name: Summary
@@ -53,9 +70,6 @@ jobs:
           $lines += $all | Sort-Object { [timespan]$_.duration } -Descending | Select-Object -First 5 |
             ForEach-Object { "| ``$($_.testName)`` | $(& $ms $_.duration) ms |" }
           $lines | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
-
-      - name: Publish
-        run: dotnet publish Motif.Memory.App -c Release -o publish
 
       # A project site lives under /<repository>/, and Jekyll must leave _framework alone.
       - name: Prepare for Pages

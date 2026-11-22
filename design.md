@@ -195,6 +195,17 @@ Through the User port, with the real Bundled Content where the real content is t
 11. A folder that isn't empty is refused when it's picked, with a problem; a cancelled picker keeps the folder picked before; nothing is written before a folder is picked, or to one that has filled since; a folder written must be picked again; a failed write doesn't report an earlier one; a folder written or a zip downloaded says so, and keeps the choices. The folder is offered first, then the zip; a browser with no folder picker is offered only the zip, and told why.
 12. The content is valid: every tag is closed and its conditions known, every role note has front matter, and every doc named in front matter has its bullet in `Temporary Docs.md`.
 
+The browser specs (`Checks/Motif.Memory.BrowserSpecs`, decision 54) run the published app in Edge, with the real composition root and the real Fittings, and a stand-in folder picker over the browser's private storage. They check only what the specs above can't:
+
+1. With a folder picker, the folder is offered first, then the zip, as `Program.cs` registers them; with none, only the zip, and the page says why.
+2. A picked folder, empty or holding only `.git`, is named; one with a file in it is refused; closing the picker keeps the folder before; refusing editing says so.
+3. Writing to a folder writes the same files as the zip holds, nested ones too.
+4. Download zip saves `agent-memory.zip`, with the memory at its root.
+5. Dragging a stage onto a later one moves it below that, and while dragging, the stage it's over shows where it lands.
+6. The toast's Copy puts what to tell the agent on the clipboard.
+7. The theme is kept after a reload.
+8. At 375, 637 and 1280 px, the app bar and the saving buttons fit, with nothing overlapping, with or without a folder picker, and with a long folder name.
+
 ## Building it
 
 1. Mark up `Content/`: front matter and tags, as above.
