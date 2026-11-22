@@ -3,7 +3,10 @@ name: Test and deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    # The top-level docs aren't part of the site, so a change to them alone needn't test or deploy it.
+    paths-ignore: ["*.md"]
   pull_request:
+    paths-ignore: ["*.md"]
   workflow_dispatch:
 
 permissions:
@@ -16,6 +19,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
 
@@ -24,7 +28,31 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Test
-        run: dotnet test Motif.Memory.sln -c Release
+        run: >
+          dotnet test Motif.Memory.sln -c Release
+          --logger "trx;LogFileName=specs.trx" --results-directory results
+
+      # How many specs there are and how long they take, on the run's page, to keep an eye on as they grow.
+      - name: Summary
+        if: always()
+        shell: pwsh
+        run: |
+          $ms = { param($time) if ($time) { [int]([timespan]$time).TotalMilliseconds } else { 0 } }
+          $lines = @('### Specs', '', '| | Passed | Failed | Skipped | The specs took | The run took |', '|---|---|---|---|---|---|')
+          $all = @()
+          foreach ($file in Get-ChildItem results -Filter *.trx -ErrorAction SilentlyContinue) {
+            $run = ([xml](Get-Content $file.FullName)).TestRun
+            $counts = $run.ResultSummary.Counters
+            $specs = @($run.Results.UnitTestResult)
+            $all += $specs
+            $total = ($specs | ForEach-Object { & $ms $_.duration } | Measure-Object -Sum).Sum
+            $whole = & $ms ([datetime]$run.Times.finish - [datetime]$run.Times.start)
+            $lines += "| $($file.BaseName) | $($counts.passed) | $($counts.failed) | $($counts.notExecuted) | $total ms | $whole ms |"
+          }
+          $lines += '', '| Slowest | Time |', '|---|---|'
+          $lines += $all | Sort-Object { [timespan]$_.duration } -Descending | Select-Object -First 5 |
+            ForEach-Object { "| ``$($_.testName)`` | $(& $ms $_.duration) ms |" }
+          $lines | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
 
       - name: Publish
         run: dotnet publish Motif.Memory.App -c Release -o publish
@@ -47,6 +75,7 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write
