@@ -28,7 +28,7 @@ public class SetupSpecs
         var f = new Fixture();
 
         f.StageNames.Should().Equal(
-            "Feature Implementor", "User", "Behaviour Documenter",
+            "Design Griller", "Feature Implementor", "User", "Behaviour Documenter",
             "Check Writer", "Code Reviewer", "Bug Fixer", "Code Tidier", "User",
             "Tester", "User");
         f.Seeing.Stages.Should().OnlyContain(s => s.Warning == "");

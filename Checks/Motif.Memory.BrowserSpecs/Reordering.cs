@@ -15,12 +15,12 @@ public sealed class Reordering(Site site)
         var page = await site.Open(profile);
         var before = await SetupPage.Stages(page);
 
-        await SetupPage.Stage(page, before[0])
-            .DragToAsync(SetupPage.Stage(page, before[2]));
+        await SetupPage.Stage(page, before[1])
+            .DragToAsync(SetupPage.Stage(page, before[3]));
 
         await Assertions.Expect(SetupPage.StageNames(page))
             .ToHaveTextAsync(
-                [before[1], before[2], before[0], .. before.Skip(3)]);
+                [before[0], before[2], before[3], before[1], .. before.Skip(4)]);
     }
 
     [Fact]
@@ -29,8 +29,8 @@ public sealed class Reordering(Site site)
         await using var profile = await site.Profile();
         var page = await site.Open(profile);
         var stages = await SetupPage.Stages(page);
-        var picked = SetupPage.Stage(page, stages[0]);
-        var over = SetupPage.Stage(page, stages[2]);
+        var picked = SetupPage.Stage(page, stages[1]);
+        var over = SetupPage.Stage(page, stages[3]);
 
         await picked.HoverAsync();
         await page.Mouse.DownAsync();

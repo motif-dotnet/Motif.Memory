@@ -53,7 +53,7 @@ A first set of role facts, from what the roles' rules say:
 
 | Role | writes | reads |
 |---|---|---|
-| Design Griller | | |
+| Design Griller | GRILLING.md, PROGRESS.md | |
 | Feature Implementor | PROGRESS.md | |
 | Behaviour Documenter | PROGRESS.md, BEHAVIOUR_CHECKLIST.md | |
 | Check Writer | PROGRESS.md, MANUAL_TESTS.md | BEHAVIOUR_CHECKLIST.md |

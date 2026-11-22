@@ -9,7 +9,8 @@ These apply in every language. Also read the guidelines for the language you're 
 <!-- if BEHAVIOUR_CHECKLIST.md -->
 - Keep every behaviour in the work's behaviour checklist ([temporary doc](../Workflow/Temporary%20Docs.md)) working.
 <!-- end -->
-- Run a dev server, or anything else that keeps running, as a background task of your session, and tell the user it stops when the session ends.
+- Run a dev server, or anything else that keeps running, through the agent's own preview tools, if it has them, or as a background task of your session, and tell the user it stops when the session ends.
+- When something stops the app running, such as a port already in use, say what's in the way (the process, its id and when it started) and ask the user to deal with it. Don't work around it with new configuration, or stop it yourself.
 
 ### Prefer X over Y
 - Prefer the shortest real word that's clear in context (`next`, `min`, `big`) over cryptic names (`t`, `p`, `ret`) or over-spelt compounds (`nextIndex`, `minValue`). One letter only for loop indices.

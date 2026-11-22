@@ -16,6 +16,9 @@ If the doc already exists, add to it rather than starting another. In a .NET rep
 
 They're deleted, so anything a future reader of the code needs, such as why a bug was left alone, also goes in a comment by the code.
 
+<!-- if GRILLING.md -->
+- Grilling (`GRILLING.md`): the Design Griller's running notes, as its role describes. When the grilling ends, its decisions move to where the repo keeps them, such as `decisions.md`.
+<!-- end -->
 - Progress (`PROGRESS.md`): what's been done, what's next, open questions for the user and their answers once decided, and the commit the work started from. Each role adds its own finished part; the Coordinator keeps the whole picture current.
 <!-- if BEHAVIOUR_CHECKLIST.md -->
 - Behaviour checklist (`BEHAVIOUR_CHECKLIST.md`): how the work should behave, as numbered points from the user's point of view: what the user was happy with after their first round of testing, or what they want, when it's written first. The numbers run on across sections, so each item can be pointed to. It must keep working through tidying, refactoring and bug fixing, unless the user redefines it.

@@ -6,20 +6,21 @@ The ideal order for a piece of work, on a branch or straight on the main branch,
 
 ### When your part is done
 
-Add it to the work's progress [temporary doc](Temporary%20Docs.md), starting one if there isn't one. Then tell the user which step comes next, and which role takes it. Do this when a piece of work is finished, not after each small change while the user is iterating.
+Add it to the work's progress [temporary doc](Temporary%20Docs.md), starting one if there isn't one<!-- if Design Griller -->, unless the work only sorted ideas (see the [Design Griller](../Roles/Design%20Griller.md))<!-- end -->. Then tell the user which step comes next, and which role takes it. Do this when a piece of work is finished, not after each small change while the user is iterating.
 
 ### The steps
 
-1. [Feature Implementor](../Roles/Feature%20Implementor.md): write the change.
-2. User: initial manual testing, to confirm the behaviour.
-3. [Behaviour Documenter](../Roles/Behaviour%20Documenter.md): add or update the behaviour checklist.
-4. [Check Writer](../Roles/Check%20Writer.md): checks for what can be checked automatically, and the start of the manual tests for the rest.
-5. [Code Reviewer](../Roles/Code%20Reviewer.md): review the change.
-6. [Bug Fixer](../Roles/Bug%20Fixer.md): work through the bug list.
-7. [Code Tidier](../Roles/Code%20Tidier.md): tidy, and pass findings that change behaviour to the bug list.
-8. User: code review.<!-- if Review Responder --> The [Review Responder](../Roles/Review%20Responder.md) makes the changes asked for, and proposes general rules from them.<!-- end -->
-9. [Tester](../Roles/Tester.md): run what an agent can. The rest goes in the manual tests for the user.
-10. User: manual testing.
+1. [Design Griller](../Roles/Design%20Griller.md): when the work starts from an idea, agree the design with the user, and start the progress doc with what's agreed, any plan, and the open questions.
+2. [Feature Implementor](../Roles/Feature%20Implementor.md): write the change.
+3. User: initial manual testing, to confirm the behaviour.
+4. [Behaviour Documenter](../Roles/Behaviour%20Documenter.md): add or update the behaviour checklist.
+5. [Check Writer](../Roles/Check%20Writer.md): checks for what can be checked automatically, and the start of the manual tests for the rest.
+6. [Code Reviewer](../Roles/Code%20Reviewer.md): review the change.
+7. [Bug Fixer](../Roles/Bug%20Fixer.md): work through the bug list.
+8. [Code Tidier](../Roles/Code%20Tidier.md): tidy, and pass findings that change behaviour to the bug list.
+9. User: code review.<!-- if Review Responder --> The [Review Responder](../Roles/Review%20Responder.md) makes the changes asked for, and proposes general rules from them.<!-- end -->
+10. [Tester](../Roles/Tester.md): run what an agent can. The rest goes in the manual tests for the user.
+11. User: manual testing.
 
 ### Ready to finish when
 

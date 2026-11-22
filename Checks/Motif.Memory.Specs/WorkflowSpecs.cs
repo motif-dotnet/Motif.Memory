@@ -11,14 +11,14 @@ public class WorkflowSpecs
     {
         var f = new Fixture();
 
-        f.Move("Code Reviewer", -4);
+        f.Move("Code Reviewer", -5);
 
         f.StageNames.Take(2)
-            .Should().Equal("Code Reviewer", "Feature Implementor");
+            .Should().Equal("Code Reviewer", "Design Griller");
         var steps = Fixture.Steps(f.Write());
         steps[0].Should().StartWith("1. [Code Reviewer]");
-        steps[1].Should().StartWith("2. [Feature Implementor]");
-        steps.Should().HaveCount(10);
+        steps[1].Should().StartWith("2. [Design Griller]");
+        steps.Should().HaveCount(11);
     }
 
     [Fact]
@@ -27,12 +27,12 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Doing.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[0]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[4]).Id, f.Stage(before[1]).Id);
 
-        f.StageNames.Take(4)
-            .Should().Equal(before[3], before[0], before[1], before[2]);
+        f.StageNames.Take(5).Should().Equal(
+            before[0], before[4], before[1], before[2], before[3]);
 
-        f.Doing.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[2]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[4]).Id, f.Stage(before[3]).Id);
 
         f.StageNames.Should().Equal(before);
     }
@@ -43,7 +43,7 @@ public class WorkflowSpecs
         var f = new Fixture();
         var before = f.StageNames;
 
-        f.Doing.MoveStageTo(f.Stage(before[2]).Id, f.Stage(before[2]).Id);
+        f.Doing.MoveStageTo(f.Stage(before[3]).Id, f.Stage(before[3]).Id);
 
         f.StageNames.Should().Equal(before);
     }

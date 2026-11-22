@@ -54,7 +54,7 @@ public class WritingSpecs
             "Leave findings that change behaviour: add them to the bug list");
         Fixture.Steps(memory).Should().NotContain(s => s.Contains("Bug Fixer"));
         Fixture.Steps(memory).Select(s => s.Split('.')[0])
-            .Should().Equal(Enumerable.Range(1, 9).Select(n => n.ToString()));
+            .Should().Equal(Enumerable.Range(1, 10).Select(n => n.ToString()));
         f.StageNames.Should().NotContain("Bug Fixer");
     }
 

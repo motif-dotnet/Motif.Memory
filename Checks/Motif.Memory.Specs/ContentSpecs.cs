@@ -23,14 +23,14 @@ public class ContentSpecs
         Real.Roles.Where(r => r.InWorkflow)
             .Should().OnlyContain(r => r.Writes.Contains("PROGRESS.md"));
         Real.Roles.Single(r => r.Name == "Design Griller")
-            .InWorkflow.Should().BeFalse();
+            .InWorkflow.Should().BeTrue();
     }
 
     [Fact]
     public void Every_doc_named_in_front_matter_has_its_bullet()
     {
         Real.Docs.Select(d => d.FileName).Should().BeEquivalentTo(
-            "PROGRESS.md", "BEHAVIOUR_CHECKLIST.md", "CODE_REVIEW.md",
+            "GRILLING.md", "PROGRESS.md", "BEHAVIOUR_CHECKLIST.md", "CODE_REVIEW.md",
             "BUGS.md", "MANUAL_TESTS.md");
         Real.Roles.SelectMany(r => r.Writes.Concat(r.Reads)).Distinct()
             .Should().OnlyContain(doc => Real.Docs.Any(d => d.FileName == doc));
