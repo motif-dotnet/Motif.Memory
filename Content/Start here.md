@@ -1,4 +1,4 @@
-Pick the role that best matches what you've been asked to do, then open only that note. Follow a link only when what it says it's for applies to the task in hand. Don't read ahead. If no role matches, tell the user, then carry on without this memory.
+Pick the role that best matches what you've been asked to do, then open only that note. Follow a link only when what it says it's for applies to the task in hand. Don't read ahead. If no role matches, tell the user, then carry on without this memory. A question that only needs reading and an answer, with no change, needs no role.
 
 If a rule here is hard to follow, contradicts another, or doesn't make sense for the task, tell the user. Don't silently ignore it or work around it. If the user asks for a specific change that reflects a general preference, suggest adding it to this memory as a rule.
 
